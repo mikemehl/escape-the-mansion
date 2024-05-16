@@ -5,3 +5,4 @@ build/
 *.lnk
 *.elf
 compile_commands.json
+.cache/clangd/index
