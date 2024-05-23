@@ -34,6 +34,7 @@ int main(void) {
   init_system();
   while (1) {
     title_draw();
+    title_update();
     VBlankIntrWait();
   }
 }

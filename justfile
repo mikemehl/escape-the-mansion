@@ -1,8 +1,13 @@
+run: build
+  #!/usr/bin/fish
+  Xwayland 2>&1 1>/dev/null  &
+  i3  2>&1 1>/dev/null &
+  mgba-qt ./escape-the-mansion.gba
+
 build: 
   bear -- make build
 
 clean:
   make clean
 
-run: build
-  mgba-qt ./escape-the-mansion.gba
+start-xwayland:
