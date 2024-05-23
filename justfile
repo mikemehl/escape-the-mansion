@@ -5,6 +5,7 @@ run: build
   mgba-qt ./escape-the-mansion.gba
 
 build: 
+  -rm ./compile_commands.json
   bear -- make build
 
 clean:

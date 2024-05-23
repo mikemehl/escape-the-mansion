@@ -31,5 +31,4 @@ void title_draw() {
   title_draw_press_start();
 }
 
-void title_update() {
-}
+void title_update() {}
