@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object type="Door">
+  <properties>
+   <property name="link" type="object" value="9"/>
+  </properties>
+  <point/>
+ </object>
+</template>

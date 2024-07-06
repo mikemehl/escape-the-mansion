@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="Start Room" type="Room" width="192" height="384" rotation="270">
+  <properties>
+   <property name="door_south" type="object" value="7"/>
+  </properties>
+ </object>
+</template>

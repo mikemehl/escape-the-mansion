@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="1" nextlayerid="5" nextobjectid="12">
+ <editorsettings>
+  <export target="rooms.tmj" format="json"/>
+ </editorsettings>
+ <objectgroup color="#ff007f" id="2" name="Rooms" class="Room">
+  <properties>
+   <property name="player_start_x" type="int" value="0"/>
+   <property name="player_start_y" type="int" value="0"/>
+   <property name="start_room" type="object" value="1"/>
+  </properties>
+  <object id="1" template="room.tx" type="Room" x="0" y="0"/>
+  <object id="3" name="Small Room" type="Room" x="192" y="384" width="160" height="160">
+   <properties>
+    <property name="door_east" type="object" value="11"/>
+    <property name="door_north" type="object" value="9"/>
+    <property name="door_west" type="object" value="10"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup color="#aa5500" id="4" name="Doors" class="Door">
+  <object id="7" template="door.tx" type="Door" x="224" y="0"/>
+  <object id="9" type="Door" x="288" y="384">
+   <properties>
+    <property name="link" type="object" value="7"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="10" template="door.tx" x="192" y="480">
+   <properties>
+    <property name="link" type="object" value="11"/>
+   </properties>
+  </object>
+  <object id="11" template="door.tx" x="352" y="480">
+   <properties>
+    <property name="link" type="object" value="10"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
