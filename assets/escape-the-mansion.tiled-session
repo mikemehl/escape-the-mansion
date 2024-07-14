@@ -42,6 +42,8 @@
     "last.imagePath": "/home/mike/code/escape-the-mansion/assets/characters",
     "map.lastUsedExportFilter": "Lua files (*.lua)",
     "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
     "openFiles": [
         "haunted-house.tsx",
         "props.tsx",
@@ -50,8 +52,8 @@
     ],
     "project": "escape-the-mansion.tiled-project",
     "recentFiles": [
-        "character.tsx",
         "test-room.tmx",
+        "character.tsx",
         "props.tsx",
         "haunted-house.tsx"
     ],
