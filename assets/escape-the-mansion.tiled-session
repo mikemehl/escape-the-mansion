@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "character.tsx",
+    "activeFile": "haunted-house.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -14,6 +14,7 @@
             "scaleInEditor": 1
         },
         "haunted-house.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 4,
             "scaleInEditor": 0.5
         },
@@ -24,11 +25,17 @@
         },
         "test-room.tmx": {
             "scale": 1,
-            "selectedLayer": 0,
+            "selectedLayer": 3,
             "viewCenter": {
                 "x": 491,
-                "y": 150.5
+                "y": 126
             }
+        },
+        "test-room.tmx#HauntedHouseProps": {
+            "scaleInDock": 1
+        },
+        "test-room.tmx#haunted-house": {
+            "scaleInDock": 1
         }
     },
     "last.exportedFilePath": "/home/mike/code/escape-the-mansion/assets",
@@ -43,10 +50,10 @@
     ],
     "project": "escape-the-mansion.tiled-project",
     "recentFiles": [
-        "haunted-house.tsx",
-        "props.tsx",
+        "character.tsx",
         "test-room.tmx",
-        "character.tsx"
+        "props.tsx",
+        "haunted-house.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
