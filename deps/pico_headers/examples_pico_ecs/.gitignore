@@ -1,0 +1,6 @@
+benchmark
+example
+*.o
+gmon.out
+massif.out*
+*.exe
