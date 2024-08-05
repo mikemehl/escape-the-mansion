@@ -1,7 +1,9 @@
 local sti = require("sti")
 
 local map = sti("assets/test-room.lua")
+local character = require("assets.character.lua")
 assert(map)
+assert(character)
 
 
 function love.load()
@@ -16,11 +18,16 @@ function love.load()
 
   layer.player = {
     x = player.x,
-    y = player.y
+    y = player.y,
+    sprite = love.graphics.newImage("assets/" .. character.image)
   }
 
+  -- layer.draw = function(self)
+  --   love.graphics.rectangle("fill", self.player.x, self.player.y, 8, 8)
+  -- end
+
   layer.draw = function(self)
-    love.graphics.rectangle("fill", self.player.x, self.player.y, 8, 8)
+    love.graphics.draw(self.sprite, self.player.x, self.player.y)
   end
 end
 
