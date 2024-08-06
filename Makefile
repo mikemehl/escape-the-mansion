@@ -9,7 +9,9 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIR) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CFLAGS := $(INC_FLAGS) -MMD -MP -Wall -Wextra $(shell pkg-config --cflags --libs raylib)
+RAYLIB_FLAGS := $(shell pkg-config --cflags --libs raylib)
+CFLAGS := $(INC_FLAGS) -MMD -MP -Wall -Wextra $(RAYLIB_FLAGS) -std=gnu99
+LDFLAGS := $(RAYLIB_FLAGS)
 
 $(BIN): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)

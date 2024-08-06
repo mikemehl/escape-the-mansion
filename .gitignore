@@ -4,3 +4,4 @@ tiled/etm.tiled-session
 build/src
 compile_commands.json
 escape-the-mansion
+.cache/clangd/index
