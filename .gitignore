@@ -1,3 +1,6 @@
 zig-cache
 zig-out/bin
 tiled/etm.tiled-session
+build/src
+compile_commands.json
+escape-the-mansion
