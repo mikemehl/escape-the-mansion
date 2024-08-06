@@ -4,7 +4,7 @@ run: build
   {{BIN_OUT}}
 
 build:
-  make
+  bear -- make
 
 clean:
   make clean

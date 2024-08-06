@@ -1,4 +1,5 @@
 #include "flecs.h"
+#include <assert.h>
 #include <raylib.h>
 #include <stdio.h>
 
@@ -30,6 +31,7 @@ static void window_init();
 static ecs_world_t *world_init();
 static void world_close(ecs_world_t *);
 static void player_init(ecs_world_t *);
+static void wall_init(ecs_world_t *);
 static void system_rectsprite_draw(ecs_iter_t *);
 static void system_player_update(ecs_iter_t *);
 static void system_gather_input(ecs_iter_t *);
@@ -38,6 +40,7 @@ int main(void) {
   ecs_world_t *world = world_init();
   window_init();
   player_init(world);
+  wall_init(world);
   while (!WindowShouldClose() && IsWindowReady()) {
     BeginDrawing();
     ClearBackground(RED);
@@ -78,6 +81,7 @@ void player_init(ecs_world_t *world) {
   ecs_add(world, player, Player);
   ecs_add(world, player, Position);
   ecs_add(world, player, RectSprite);
+  ecs_add(world, player, CollisionBox);
 
   Position *pos = ecs_get_mut(world, player, Position);
   assert(pos);
@@ -89,6 +93,35 @@ void player_init(ecs_world_t *world) {
   rect->color = GREEN;
   rect->dimensions.x = 50;
   rect->dimensions.y = 50;
+
+  CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
+  assert(collision);
+  collision->x = rect->dimensions.x;
+  collision->y = rect->dimensions.y;
+}
+
+void wall_init(ecs_world_t *world) {
+  assert(world);
+  ecs_entity_t player = ecs_new(world);
+  ecs_add(world, player, Position);
+  ecs_add(world, player, RectSprite);
+  ecs_add(world, player, CollisionBox);
+
+  Position *pos = ecs_get_mut(world, player, Position);
+  assert(pos);
+  pos->x = 640 / 2;
+  pos->y = 480 / 2 - 100;
+
+  RectSprite *rect = ecs_get_mut(world, player, RectSprite);
+  assert(rect);
+  rect->color = BLUE;
+  rect->dimensions.x = 150;
+  rect->dimensions.y = 25;
+
+  CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
+  assert(collision);
+  collision->x = rect->dimensions.x;
+  collision->y = rect->dimensions.y;
 }
 
 static void system_rectsprite_draw(ecs_iter_t *it) {
@@ -106,19 +139,23 @@ static void system_rectsprite_draw(ecs_iter_t *it) {
 static void system_player_update(ecs_iter_t *it) {
   Position *pos = ecs_field(it, Position, 0);
   assert(pos);
+  Position new_pos = *pos;
   const Input *input = ecs_singleton_get(it->world, Input);
   assert(input);
   if (input->up) {
-    pos->y -= 1;
+    new_pos.y -= 1;
   } else if (input->down) {
-    pos->y += 1;
+    new_pos.y += 1;
   }
 
   if (input->right) {
-    pos->x += 1;
+    new_pos.x += 1;
   } else if (input->left) {
-    pos->x -= 1;
+    new_pos.x -= 1;
   }
+
+  // TODO: Check for collisions.
+  *pos = new_pos;
 }
 
 static void system_gather_input(ecs_iter_t *it) {
