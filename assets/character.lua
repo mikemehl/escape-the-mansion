@@ -26,7 +26,7 @@ return {
   },
   properties = {},
   wangsets = {},
-  tilecount = 225,
+  tilecount = 16,
   tiles = {
     {
       id = 3,

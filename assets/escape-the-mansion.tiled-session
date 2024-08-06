@@ -27,12 +27,15 @@
             "scale": 11,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 132.04545454545456,
-                "y": 64.63636363636364
+                "x": 116.45454545454545,
+                "y": 80
             }
         },
         "test-room.tmx#HauntedHouseProps": {
             "scaleInDock": 1
+        },
+        "test-room.tmx#character": {
+            "dynamicWrapping": false
         },
         "test-room.tmx#haunted-house": {
             "scaleInDock": 1
