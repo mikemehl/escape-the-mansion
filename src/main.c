@@ -65,6 +65,9 @@ ecs_world_t *world_init() {
       world, Input,
       {.up = false, .down = false, .left = false, .right = false});
   ECS_TAG_DEFINE(world, Player);
+  ECS_SYSTEM_DEFINE(world, system_gather_input, EcsOnUpdate, Input($));
+  ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, Position, RectSprite);
+  ECS_SYSTEM_DEFINE(world, system_player_update, 0, Position, Player);
   return world;
 }
 void world_close(ecs_world_t *world) { ecs_fini(world); }
@@ -86,10 +89,6 @@ void player_init(ecs_world_t *world) {
   rect->color = GREEN;
   rect->dimensions.x = 50;
   rect->dimensions.y = 50;
-
-  ECS_SYSTEM_DEFINE(world, system_gather_input, EcsOnUpdate, Input($));
-  ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, Position, RectSprite);
-  ECS_SYSTEM_DEFINE(world, system_player_update, 0, Position, Player);
 }
 
 static void system_rectsprite_draw(ecs_iter_t *it) {
