@@ -16,34 +16,31 @@ ECS_COMPONENT_DECLARE(RectSprite);
 ECS_COMPONENT_DECLARE(CollisionBox);
 ECS_TAG_DECLARE(Player);
 ECS_SYSTEM_DECLARE(system_rectsprite_draw);
+ECS_SYSTEM_DECLARE(system_player_update);
 
 static void window_init();
-static void window_close();
 static ecs_world_t *world_init();
 static void world_close(ecs_world_t *);
 static void player_init(ecs_world_t *);
 static void system_rectsprite_draw(ecs_iter_t *);
+static void system_player_update(ecs_iter_t *);
 
 int main(void) {
   ecs_world_t *world = world_init();
   window_init();
   player_init(world);
-  while (!WindowShouldClose()) {
+  while (!WindowShouldClose() && IsWindowReady()) {
     BeginDrawing();
     ClearBackground(RED);
     ecs_run(world, ecs_id(system_rectsprite_draw), 0, NULL);
     EndDrawing();
-    if (GetKeyPressed() == KEY_Q) {
-      break;
-    }
+    ecs_run(world, ecs_id(system_player_update), 0, NULL);
   }
-  window_close();
   world_close(world);
   return 0;
 }
 
 void window_init() { InitWindow(640, 480, "escape-the-mansion"); }
-void window_close() { CloseWindow(); }
 ecs_world_t *world_init() {
   ecs_world_t *world = ecs_init();
   ECS_COMPONENT_DEFINE(world, Position);
@@ -74,6 +71,7 @@ void player_init(ecs_world_t *world) {
   rect->dimensions.y = 50;
 
   ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, Position, RectSprite);
+  ECS_SYSTEM_DEFINE(world, system_player_update, 0, Position, Player);
 }
 
 static void system_rectsprite_draw(ecs_iter_t *it) {
@@ -85,5 +83,31 @@ static void system_rectsprite_draw(ecs_iter_t *it) {
   for (int i = 0; i < it->count; i++) {
     DrawRectangle(p[i].x, p[i].y, r[i].dimensions.x, r[i].dimensions.y,
                   r[i].color);
+  }
+}
+
+static void system_player_update(ecs_iter_t *it) {
+  Position *pos = ecs_field(it, Position, 0);
+  assert(pos);
+
+  KeyboardKey pressed = GetKeyPressed();
+  switch (pressed) {
+  case KEY_W:
+    pos->y -= 1;
+    break;
+  case KEY_A:
+    pos->x -= 1;
+    break;
+  case KEY_S:
+    pos->y += 1;
+    break;
+  case KEY_D:
+    pos->x += 1;
+    break;
+  case KEY_Q:
+    CloseWindow();
+    break;
+  default:
+    break;
   }
 }
