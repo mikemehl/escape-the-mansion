@@ -6,10 +6,10 @@
 typedef Vector2 Position;
 typedef Vector2 Velocity;
 typedef struct RectSprite {
-  Vector2 dimensions;
+  Rectangle dimensions;
   Color color;
 } RectSprite;
-typedef Vector2 CollisionBox;
+typedef Rectangle CollisionBox;
 typedef struct Input {
   bool up;
   bool left;
@@ -70,7 +70,8 @@ ecs_world_t *world_init() {
   ECS_TAG_DEFINE(world, Player);
   ECS_SYSTEM_DEFINE(world, system_gather_input, EcsOnUpdate, Input($));
   ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, Position, RectSprite);
-  ECS_SYSTEM_DEFINE(world, system_player_update, 0, Position, Player);
+  ECS_SYSTEM_DEFINE(world, system_player_update, 0, Position, Player,
+                    RectSprite, CollisionBox);
   return world;
 }
 void world_close(ecs_world_t *world) { ecs_fini(world); }
@@ -91,13 +92,14 @@ void player_init(ecs_world_t *world) {
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
   rect->color = GREEN;
-  rect->dimensions.x = 50;
-  rect->dimensions.y = 50;
+  rect->dimensions.x = pos->x;
+  rect->dimensions.y = pos->y;
+  rect->dimensions.width = 25;
+  rect->dimensions.height = 25;
 
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
   assert(collision);
-  collision->x = rect->dimensions.x;
-  collision->y = rect->dimensions.y;
+  *collision = (rect->dimensions);
 }
 
 void wall_init(ecs_world_t *world) {
@@ -115,13 +117,14 @@ void wall_init(ecs_world_t *world) {
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
   rect->color = BLUE;
-  rect->dimensions.x = 150;
-  rect->dimensions.y = 25;
+  rect->dimensions.x = pos->x;
+  rect->dimensions.y = pos->y;
+  rect->dimensions.width = 150;
+  rect->dimensions.height = 25;
 
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
   assert(collision);
-  collision->x = rect->dimensions.x;
-  collision->y = rect->dimensions.y;
+  *collision = rect->dimensions;
 }
 
 static void system_rectsprite_draw(ecs_iter_t *it) {
@@ -131,7 +134,7 @@ static void system_rectsprite_draw(ecs_iter_t *it) {
   assert(r);
 
   for (int i = 0; i < it->count; i++) {
-    DrawRectangle(p[i].x, p[i].y, r[i].dimensions.x, r[i].dimensions.y,
+    DrawRectangle(p[i].x, p[i].y, r[i].dimensions.width, r[i].dimensions.height,
                   r[i].color);
   }
 }
@@ -139,6 +142,10 @@ static void system_rectsprite_draw(ecs_iter_t *it) {
 static void system_player_update(ecs_iter_t *it) {
   Position *pos = ecs_field(it, Position, 0);
   assert(pos);
+  RectSprite *rs = ecs_field(it, RectSprite, 2);
+  assert(rs);
+  CollisionBox *cb = ecs_field(it, CollisionBox, 3);
+  assert(cb);
   Position new_pos = *pos;
   const Input *input = ecs_singleton_get(it->world, Input);
   assert(input);
@@ -156,6 +163,10 @@ static void system_player_update(ecs_iter_t *it) {
 
   // TODO: Check for collisions.
   *pos = new_pos;
+  rs->dimensions.x = pos->x;
+  rs->dimensions.y = pos->y;
+  cb->x = pos->x;
+  cb->y = pos->y;
 }
 
 static void system_gather_input(ecs_iter_t *it) {
