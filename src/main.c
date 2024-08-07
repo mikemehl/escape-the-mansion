@@ -27,6 +27,7 @@ ECS_TAG_DECLARE(Player);
 ECS_SYSTEM_DECLARE(system_gather_input);
 ECS_SYSTEM_DECLARE(system_rectsprite_draw);
 ECS_SYSTEM_DECLARE(system_player_update);
+ECS_QUERY_DECLARE(PlayerCollisionQuery);
 
 static void window_init();
 static ecs_world_t *world_init();
@@ -44,7 +45,7 @@ int main(void) {
   wall_init(world);
   while (!WindowShouldClose() && IsWindowReady()) {
     BeginDrawing();
-    ClearBackground(RED);
+    ClearBackground(GRAY);
     ecs_run(world, ecs_id(system_rectsprite_draw), 0, NULL);
     EndDrawing();
     ecs_run(world, ecs_id(system_player_update), 0, NULL);
@@ -69,6 +70,8 @@ ecs_world_t *world_init() {
       world, Input,
       {.up = false, .down = false, .left = false, .right = false});
   ECS_TAG_DEFINE(world, Player);
+  ECS_QUERY_DEFINE(world, PlayerCollisionQuery, Position, CollisionBox,
+                   !Player);
   ECS_SYSTEM_DEFINE(world, system_gather_input, EcsOnUpdate, Input($));
   ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, Position, RectSprite);
   ECS_SYSTEM_DEFINE(world, system_player_update, 0, Position, Player,
@@ -165,10 +168,7 @@ static void system_player_update(ecs_iter_t *it) {
   bool collided = false;
   cb->x = new_pos.x;
   cb->y = new_pos.y;
-  ecs_query_t *collider_query =
-      ecs_query(it->world, {.terms = {{ecs_id(Position)},
-                                      {ecs_id(CollisionBox)},
-                                      {ecs_id(Player), .oper = EcsNot}}});
+  ecs_query_t *collider_query = PlayerCollisionQuery;
   ecs_iter_t collider_it = ecs_query_iter(it->world, collider_query);
 
   while (ecs_query_next(&collider_it)) {
