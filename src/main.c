@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <raylib.h>
 #include <stdio.h>
+#include <time.h>
 
 typedef Vector2 Position;
 typedef Vector2 Velocity;
@@ -161,8 +162,28 @@ static void system_player_update(ecs_iter_t *it) {
     new_pos.x -= 1;
   }
 
-  // TODO: Check for collisions.
-  *pos = new_pos;
+  bool collided = false;
+  cb->x = new_pos.x;
+  cb->y = new_pos.y;
+  ecs_query_t *collider_query =
+      ecs_query(it->world, {.terms = {{ecs_id(Position)},
+                                      {ecs_id(CollisionBox)},
+                                      {ecs_id(Player), .oper = EcsNot}}});
+  ecs_iter_t collider_it = ecs_query_iter(it->world, collider_query);
+
+  while (ecs_query_next(&collider_it)) {
+    CollisionBox *collider = ecs_field(&collider_it, CollisionBox, 1);
+    if (CheckCollisionRecs(*cb, *collider)) {
+      ecs_iter_fini(&collider_it);
+      collided = true;
+      break;
+    }
+  }
+
+  if (!collided) {
+    *pos = new_pos;
+  }
+
   rs->dimensions.x = pos->x;
   rs->dimensions.y = pos->y;
   cb->x = pos->x;
