@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "image.h"
 #include "input.h"
 #include "physics.h"
 #include "render.h"
@@ -32,6 +33,7 @@ int main(void) {
     BeginDrawing();
     ClearBackground(GRAY);
     ecs_run(world, ecs_id(system_rectsprite_draw), 0, NULL);
+    ecs_run(world, ecs_id(system_draw_sprite), 0, NULL);
     EndDrawing();
     ecs_run(world, ecs_id(system_player_update), 0, NULL);
     ecs_run(world, ecs_id(system_gather_input), 0, NULL);
@@ -47,6 +49,7 @@ void window_init() {
 ecs_world_t *world_init() {
   ecs_world_t *world = ecs_init();
   ECS_IMPORT(world, Physics);
+  ECS_IMPORT(world, Image);
   ECS_IMPORT(world, Render);
   ECS_IMPORT(world, Input);
   ecs_singleton_set(
@@ -72,6 +75,7 @@ void player_init(ecs_world_t *world) {
   ecs_add(world, player, Position);
   ecs_add(world, player, RectSprite);
   ecs_add(world, player, CollisionBox);
+  ecs_add(world, player, Sprite);
 
   Position *pos = ecs_get_mut(world, player, Position);
   assert(pos);
@@ -89,6 +93,10 @@ void player_init(ecs_world_t *world) {
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
   assert(collision);
   *collision = (rect->dimensions);
+
+  Sprite *sprite = ecs_get_mut(world, player, Sprite);
+  assert(sprite);
+  *sprite = load_walk_sprite();
 }
 
 void wall_init(ecs_world_t *world) {

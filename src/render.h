@@ -9,6 +9,7 @@ typedef struct RectSprite {
 } RectSprite;
 
 extern ECS_COMPONENT_DECLARE(RectSprite);
+extern ECS_SYSTEM_DECLARE(system_draw_sprite);
 
 void RenderImport(ecs_world_t *world);
 
