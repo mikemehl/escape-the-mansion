@@ -4,25 +4,10 @@
 #include <stdio.h>
 #include <time.h>
 
-typedef Vector2 Position;
-typedef Vector2 Velocity;
-typedef struct RectSprite {
-  Rectangle dimensions;
-  Color color;
-} RectSprite;
-typedef Rectangle CollisionBox;
-typedef struct Input {
-  bool up;
-  bool left;
-  bool down;
-  bool right;
-} Input;
+#include "input.h"
+#include "physics.h"
+#include "render.h"
 
-ECS_COMPONENT_DECLARE(Position);
-ECS_COMPONENT_DECLARE(Velocity);
-ECS_COMPONENT_DECLARE(RectSprite);
-ECS_COMPONENT_DECLARE(CollisionBox);
-ECS_COMPONENT_DECLARE(Input);
 ECS_TAG_DECLARE(Player);
 ECS_SYSTEM_DECLARE(system_gather_input);
 ECS_SYSTEM_DECLARE(system_rectsprite_draw);
@@ -61,21 +46,21 @@ void window_init() {
 }
 ecs_world_t *world_init() {
   ecs_world_t *world = ecs_init();
-  ECS_COMPONENT_DEFINE(world, Position);
-  ECS_COMPONENT_DEFINE(world, Velocity);
-  ECS_COMPONENT_DEFINE(world, RectSprite);
-  ECS_COMPONENT_DEFINE(world, CollisionBox);
-  ECS_COMPONENT_DEFINE(world, Input);
+  ECS_IMPORT(world, Physics);
+  ECS_IMPORT(world, Render);
+  ECS_IMPORT(world, Input);
   ecs_singleton_set(
-      world, Input,
+      world, InputActions,
       {.up = false, .down = false, .left = false, .right = false});
   ECS_TAG_DEFINE(world, Player);
-  ECS_QUERY_DEFINE(world, PlayerCollisionQuery, Position, CollisionBox,
-                   !Player);
-  ECS_SYSTEM_DEFINE(world, system_gather_input, EcsOnUpdate, Input($));
-  ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, Position, RectSprite);
-  ECS_SYSTEM_DEFINE(world, system_player_update, 0, Position, Player,
-                    RectSprite, CollisionBox);
+  ECS_QUERY_DEFINE(world, PlayerCollisionQuery, physics.Position,
+                   physics.CollisionBox, !Player);
+  ECS_SYSTEM_DEFINE(world, system_gather_input, EcsOnUpdate,
+                    input.InputActions($));
+  ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, physics.Position,
+                    render.RectSprite);
+  ECS_SYSTEM_DEFINE(world, system_player_update, 0, physics.Position, Player,
+                    render.RectSprite, physics.CollisionBox);
   return world;
 }
 void world_close(ecs_world_t *world) { ecs_fini(world); }
@@ -151,7 +136,7 @@ static void system_player_update(ecs_iter_t *it) {
   CollisionBox *cb = ecs_field(it, CollisionBox, 3);
   assert(cb);
   Position new_pos = *pos;
-  const Input *input = ecs_singleton_get(it->world, Input);
+  const InputActions *input = ecs_singleton_get(it->world, InputActions);
   assert(input);
   if (input->up) {
     new_pos.y -= 1;
@@ -191,7 +176,7 @@ static void system_player_update(ecs_iter_t *it) {
 }
 
 static void system_gather_input(ecs_iter_t *it) {
-  Input *input = ecs_field(it, Input, 0);
+  InputActions *input = ecs_field(it, InputActions, 0);
   assert(input);
   if (IsKeyDown(KEY_Q)) {
     CloseWindow();
