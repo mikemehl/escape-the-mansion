@@ -10,7 +10,7 @@ typedef struct Sprite {
 
 extern ECS_COMPONENT_DECLARE(Sprite);
 
-void ImageImport(ecs_world_t *world);
+void ResourcesImport(ecs_world_t *world);
 Sprite load_walk_sprite();
 
 #endif

@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "image.h"
 #include "input.h"
 #include "physics.h"
 #include "render.h"
+#include "resources.h"
 
 ECS_TAG_DECLARE(Player);
 ECS_SYSTEM_DECLARE(system_gather_input);
@@ -61,7 +61,7 @@ void window_init() {
 ecs_world_t *world_init() {
   ecs_world_t *world = ecs_init();
   ECS_IMPORT(world, Physics);
-  ECS_IMPORT(world, Image);
+  ECS_IMPORT(world, Resources);
   ECS_IMPORT(world, Render);
   ECS_IMPORT(world, Input);
   ecs_singleton_set(

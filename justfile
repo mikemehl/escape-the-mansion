@@ -9,3 +9,5 @@ build:
 clean:
   make clean
 
+debug:
+  gdb {{BIN_OUT}}

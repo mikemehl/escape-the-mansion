@@ -1,4 +1,4 @@
-#include "image.h"
+#include "resources.h"
 #include <raylib.h>
 
 ECS_COMPONENT_DECLARE(Sprite);
@@ -10,7 +10,7 @@ Sprite load_walk_sprite() {
   return walk_sprite;
 }
 
-void ImageImport(ecs_world_t *world) {
-  ECS_MODULE(world, Image);
+void ResourcesImport(ecs_world_t *world) {
+  ECS_MODULE(world, Resources);
   ECS_COMPONENT_DEFINE(world, Sprite);
 }

@@ -1,6 +1,6 @@
 #include "render.h"
-#include "image.h"
 #include "physics.h"
+#include "resources.h"
 #include <raylib.h>
 
 ECS_COMPONENT_DECLARE(RectSprite);
@@ -21,5 +21,5 @@ void RenderImport(ecs_world_t *world) {
   ECS_COMPONENT_DEFINE(world, RectSprite);
   ECS_COMPONENT_DEFINE(world, CameraFollow);
   ECS_SYSTEM_DEFINE(world, system_draw_sprite, EcsOnUpdate, physics.Position,
-                    image.Sprite);
+                    resources.Sprite);
 }
