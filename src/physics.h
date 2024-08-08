@@ -3,8 +3,8 @@
 #include "flecs.h"
 #include <raylib.h>
 
-typedef Vector2 Position;
-typedef Vector2 Velocity;
+typedef Vector2   Position;
+typedef Vector2   Velocity;
 typedef Rectangle CollisionBox;
 
 extern ECS_COMPONENT_DECLARE(Position);

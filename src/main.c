@@ -19,14 +19,14 @@ ECS_SYSTEM_DECLARE(system_camera_draw_begin);
 ECS_SYSTEM_DECLARE(system_camera_draw_end);
 ECS_SYSTEM_DECLARE(system_camera_update);
 
-static void window_init();
+static void         window_init();
 static ecs_world_t *world_init();
-static void world_close(ecs_world_t *);
-static void player_init(ecs_world_t *);
-static void wall_init(ecs_world_t *);
-static void system_rectsprite_draw(ecs_iter_t *);
-static void system_player_update(ecs_iter_t *);
-static void system_gather_input(ecs_iter_t *);
+static void         world_close(ecs_world_t *);
+static void         player_init(ecs_world_t *);
+static void         wall_init(ecs_world_t *);
+static void         system_rectsprite_draw(ecs_iter_t *);
+static void         system_player_update(ecs_iter_t *);
+static void         system_gather_input(ecs_iter_t *);
 
 static void system_camera_update(ecs_iter_t *it);
 static void system_camera_draw_begin(ecs_iter_t *it);
@@ -83,7 +83,9 @@ ecs_world_t *world_init() {
   return world;
 }
 
-void world_close(ecs_world_t *world) { ecs_fini(world); }
+void world_close(ecs_world_t *world) {
+  ecs_fini(world);
+}
 
 void player_init(ecs_world_t *world) {
   assert(world);
@@ -102,10 +104,10 @@ void player_init(ecs_world_t *world) {
 
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
-  rect->color = GREEN;
-  rect->dimensions.x = pos->x;
-  rect->dimensions.y = pos->y;
-  rect->dimensions.width = 8;
+  rect->color             = GREEN;
+  rect->dimensions.x      = pos->x;
+  rect->dimensions.y      = pos->y;
+  rect->dimensions.width  = 8;
   rect->dimensions.height = 10;
 
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
@@ -118,8 +120,8 @@ void player_init(ecs_world_t *world) {
 
   CameraFollow *camera = ecs_get_mut(world, player, CameraFollow);
   assert(camera);
-  camera->zoom = 4.0f;
-  camera->target = *pos;
+  camera->zoom     = 4.0f;
+  camera->target   = *pos;
   camera->offset.x = 640 / 2;
   camera->offset.y = 480 / 2;
 }
@@ -138,10 +140,10 @@ void wall_init(ecs_world_t *world) {
 
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
-  rect->color = BLUE;
-  rect->dimensions.x = pos->x;
-  rect->dimensions.y = pos->y;
-  rect->dimensions.width = 150;
+  rect->color             = BLUE;
+  rect->dimensions.x      = pos->x;
+  rect->dimensions.y      = pos->y;
+  rect->dimensions.width  = 150;
   rect->dimensions.height = 4;
 
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
@@ -150,7 +152,7 @@ void wall_init(ecs_world_t *world) {
 }
 
 void system_rectsprite_draw(ecs_iter_t *it) {
-  Position *p = ecs_field(it, Position, 0);
+  Position   *p = ecs_field(it, Position, 0);
   RectSprite *r = ecs_field(it, RectSprite, 1);
   assert(p);
   assert(r);
@@ -168,8 +170,8 @@ void system_player_update(ecs_iter_t *it) {
   assert(rs);
   CollisionBox *cb = ecs_field(it, CollisionBox, 3);
   assert(cb);
-  Position new_pos = *pos;
-  const InputActions *input = ecs_singleton_get(it->world, InputActions);
+  Position            new_pos = *pos;
+  const InputActions *input   = ecs_singleton_get(it->world, InputActions);
   assert(input);
   if (input->up) {
     new_pos.y -= 1;
@@ -183,11 +185,11 @@ void system_player_update(ecs_iter_t *it) {
     new_pos.x -= 1;
   }
 
-  bool collided = false;
-  cb->x = new_pos.x;
-  cb->y = new_pos.y;
+  bool collided               = false;
+  cb->x                       = new_pos.x;
+  cb->y                       = new_pos.y;
   ecs_query_t *collider_query = PlayerCollisionQuery;
-  ecs_iter_t collider_it = ecs_query_iter(it->world, collider_query);
+  ecs_iter_t   collider_it    = ecs_query_iter(it->world, collider_query);
 
   while (ecs_query_next(&collider_it)) {
     CollisionBox *collider = ecs_field(&collider_it, CollisionBox, 1);
@@ -204,8 +206,8 @@ void system_player_update(ecs_iter_t *it) {
 
   rs->dimensions.x = pos->x;
   rs->dimensions.y = pos->y;
-  cb->x = pos->x;
-  cb->y = pos->y;
+  cb->x            = pos->x;
+  cb->y            = pos->y;
 }
 
 void system_gather_input(ecs_iter_t *it) {
@@ -215,10 +217,10 @@ void system_gather_input(ecs_iter_t *it) {
     CloseWindow();
     return;
   }
-  input->up = IsKeyDown(KEY_W);
-  input->down = IsKeyDown(KEY_S);
+  input->up    = IsKeyDown(KEY_W);
+  input->down  = IsKeyDown(KEY_S);
   input->right = IsKeyDown(KEY_D);
-  input->left = IsKeyDown(KEY_A);
+  input->left  = IsKeyDown(KEY_A);
 }
 
 void system_camera_draw_begin(ecs_iter_t *it) {
@@ -237,7 +239,7 @@ void system_camera_draw_end(ecs_iter_t *it) {
 
 void system_camera_update(ecs_iter_t *it) {
   CameraFollow *camera = ecs_field(it, CameraFollow, 0);
-  Position *pos = ecs_field(it, Position, 1);
+  Position     *pos    = ecs_field(it, Position, 1);
 
   for (int i = 0; i < it->count; i++) {
     camera[i].target = pos[i];
