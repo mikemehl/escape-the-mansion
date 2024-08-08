@@ -19,15 +19,17 @@ ECS_SYSTEM_DECLARE(system_camera_draw_begin);
 ECS_SYSTEM_DECLARE(system_camera_draw_end);
 ECS_SYSTEM_DECLARE(system_camera_update);
 
-static void         window_init();
-static ecs_world_t *world_init();
-static void         world_close(ecs_world_t *);
-static void         player_init(ecs_world_t *);
-static void         wall_init(ecs_world_t *);
-static void         system_rectsprite_draw(ecs_iter_t *);
-static void         system_player_update(ecs_iter_t *);
-static void         system_gather_input(ecs_iter_t *);
+static void window_init();
 
+static ecs_world_t *world_init();
+
+static void world_close(ecs_world_t *);
+static void player_init(ecs_world_t *);
+static void wall_init(ecs_world_t *);
+
+static void system_rectsprite_draw(ecs_iter_t *);
+static void system_player_update(ecs_iter_t *);
+static void system_gather_input(ecs_iter_t *);
 static void system_camera_update(ecs_iter_t *it);
 static void system_camera_draw_begin(ecs_iter_t *it);
 static void system_camera_draw_end(ecs_iter_t *it);
