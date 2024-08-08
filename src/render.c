@@ -4,6 +4,7 @@
 #include <raylib.h>
 
 ECS_COMPONENT_DECLARE(RectSprite);
+ECS_COMPONENT_DECLARE(CameraFollow);
 ECS_SYSTEM_DECLARE(system_draw_sprite);
 
 void system_draw_sprite(ecs_iter_t *it) {
@@ -18,6 +19,7 @@ void system_draw_sprite(ecs_iter_t *it) {
 void RenderImport(ecs_world_t *world) {
   ECS_MODULE(world, Render);
   ECS_COMPONENT_DEFINE(world, RectSprite);
+  ECS_COMPONENT_DEFINE(world, CameraFollow);
   ECS_SYSTEM_DEFINE(world, system_draw_sprite, EcsOnUpdate, physics.Position,
                     image.Sprite);
 }
