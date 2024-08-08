@@ -1,6 +1,9 @@
 #include "resources.h"
 #include <raylib.h>
 
+#define CUTE_TILED_IMPLEMENTATION
+#include "cute_tiled.h"
+
 ECS_COMPONENT_DECLARE(Sprite);
 
 Sprite load_walk_sprite() {
