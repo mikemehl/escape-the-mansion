@@ -57,6 +57,7 @@ void window_init() {
   InitWindow(640, 480, "escape-the-mansion");
   SetTargetFPS(60);
 }
+
 ecs_world_t *world_init() {
   ecs_world_t *world = ecs_init();
   ECS_IMPORT(world, Physics);
@@ -81,6 +82,7 @@ ecs_world_t *world_init() {
                     physics.Position);
   return world;
 }
+
 void world_close(ecs_world_t *world) { ecs_fini(world); }
 
 void player_init(ecs_world_t *world) {
@@ -103,8 +105,8 @@ void player_init(ecs_world_t *world) {
   rect->color = GREEN;
   rect->dimensions.x = pos->x;
   rect->dimensions.y = pos->y;
-  rect->dimensions.width = 25;
-  rect->dimensions.height = 25;
+  rect->dimensions.width = 8;
+  rect->dimensions.height = 10;
 
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
   assert(collision);
@@ -116,7 +118,7 @@ void player_init(ecs_world_t *world) {
 
   CameraFollow *camera = ecs_get_mut(world, player, CameraFollow);
   assert(camera);
-  camera->zoom = 2.0f;
+  camera->zoom = 4.0f;
   camera->target = *pos;
   camera->offset.x = 640 / 2;
   camera->offset.y = 480 / 2;
@@ -140,14 +142,14 @@ void wall_init(ecs_world_t *world) {
   rect->dimensions.x = pos->x;
   rect->dimensions.y = pos->y;
   rect->dimensions.width = 150;
-  rect->dimensions.height = 25;
+  rect->dimensions.height = 4;
 
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
   assert(collision);
   *collision = rect->dimensions;
 }
 
-static void system_rectsprite_draw(ecs_iter_t *it) {
+void system_rectsprite_draw(ecs_iter_t *it) {
   Position *p = ecs_field(it, Position, 0);
   RectSprite *r = ecs_field(it, RectSprite, 1);
   assert(p);
@@ -159,7 +161,7 @@ static void system_rectsprite_draw(ecs_iter_t *it) {
   }
 }
 
-static void system_player_update(ecs_iter_t *it) {
+void system_player_update(ecs_iter_t *it) {
   Position *pos = ecs_field(it, Position, 0);
   assert(pos);
   RectSprite *rs = ecs_field(it, RectSprite, 2);
@@ -206,7 +208,7 @@ static void system_player_update(ecs_iter_t *it) {
   cb->y = pos->y;
 }
 
-static void system_gather_input(ecs_iter_t *it) {
+void system_gather_input(ecs_iter_t *it) {
   InputActions *input = ecs_field(it, InputActions, 0);
   assert(input);
   if (IsKeyDown(KEY_Q)) {
@@ -219,21 +221,21 @@ static void system_gather_input(ecs_iter_t *it) {
   input->left = IsKeyDown(KEY_A);
 }
 
-static void system_camera_draw_begin(ecs_iter_t *it) {
+void system_camera_draw_begin(ecs_iter_t *it) {
   CameraFollow *camera = ecs_field(it, CameraFollow, 0);
   assert(camera);
   assert(it->count == 1);
   BeginMode2D(*camera);
 }
 
-static void system_camera_draw_end(ecs_iter_t *it) {
+void system_camera_draw_end(ecs_iter_t *it) {
   CameraFollow *camera = ecs_field(it, CameraFollow, 0);
   assert(camera);
   assert(it->count == 1);
   EndMode2D();
 }
 
-static void system_camera_update(ecs_iter_t *it) {
+void system_camera_update(ecs_iter_t *it) {
   CameraFollow *camera = ecs_field(it, CameraFollow, 0);
   Position *pos = ecs_field(it, Position, 1);
 
