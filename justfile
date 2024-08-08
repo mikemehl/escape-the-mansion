@@ -17,3 +17,9 @@ format:
 
 rrespacker:
   xdg-open https://raylibtech.itch.io/rrespacker
+
+code-count:
+  tokei ./src ./Makefile
+
+tiled:
+  tiled ./assets/escape-the-mansion.tiled-session
