@@ -1,0 +1,7 @@
+quad
+scenegraph
+particles
+*.o
+*.trace
+gmon.out
+*.exe

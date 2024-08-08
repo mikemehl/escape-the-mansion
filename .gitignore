@@ -5,3 +5,4 @@ build/src
 compile_commands.json
 escape-the-mansion
 .cache/clangd/index
+build/libs
