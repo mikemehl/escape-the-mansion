@@ -15,6 +15,10 @@ alias c := clean
 clean:
   -make -C {{BUILD_DIR}} clean
 
+alias gc := git-clean
+git-clean:
+  git clean -fxd
+
 alias rb := rebuild
 rebuild: clean build
 
