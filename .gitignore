@@ -7,3 +7,7 @@ escape-the-mansion
 .cache/clangd/index
 build/libs
 build
+libs/libtmj/CMakeFiles
+libs/libtmj/CMakeCache.txt
+libs/libtmj/Makefile
+libs/libtmj/cmake_install.cmake

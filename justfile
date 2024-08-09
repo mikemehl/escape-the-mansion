@@ -1,17 +1,24 @@
 BUILD_DIR := justfile_directory() / "build"
 BIN_OUT := BUILD_DIR / "escape-the-mansion"
 
+alias r := run
 run: build
   {{BIN_OUT}}
 
+alias b := build
 build:
   mkdir -p {{BUILD_DIR}}
-  cmake -S . -B {{BUILD_DIR}}
-  cmake --build {{BUILD_DIR}}
+  cmake -S . -B {{BUILD_DIR}} 
+  cmake --build {{BUILD_DIR}} 
 
+alias c := clean
 clean:
   -make -C {{BUILD_DIR}} clean
 
+alias rb := rebuild
+rebuild: clean build
+
+alias dbg := debug
 debug:
   gdb {{BIN_OUT}}
 
