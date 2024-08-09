@@ -15,5 +15,6 @@ extern ECS_COMPONENT_DECLARE(CameraFollow);
 extern ECS_SYSTEM_DECLARE(system_draw_sprite);
 
 void RenderImport(ecs_world_t *world);
+void RenderRoom();
 
 #endif // !__RENDER__H__

@@ -43,6 +43,7 @@ int main(void) {
     BeginDrawing();
     ClearBackground(GRAY);
     ecs_run(world, ecs_id(system_camera_draw_begin), 0, NULL);
+    RenderRoom();
     ecs_run(world, ecs_id(system_rectsprite_draw), 0, NULL);
     ecs_run(world, ecs_id(system_draw_sprite), 0, NULL);
     ecs_run(world, ecs_id(system_camera_draw_end), 0, NULL);
@@ -101,8 +102,8 @@ void player_init(ecs_world_t *world) {
 
   Position *pos = ecs_get_mut(world, player, Position);
   assert(pos);
-  pos->x = 640 / 2;
-  pos->y = 480 / 2;
+  pos->x = 192;
+  pos->y = 96;
 
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
@@ -130,17 +131,17 @@ void player_init(ecs_world_t *world) {
 
 void wall_init(ecs_world_t *world) {
   assert(world);
-  ecs_entity_t player = ecs_new(world);
-  ecs_add(world, player, Position);
-  ecs_add(world, player, RectSprite);
-  ecs_add(world, player, CollisionBox);
+  ecs_entity_t wall = ecs_new(world);
+  ecs_add(world, wall, Position);
+  ecs_add(world, wall, RectSprite);
+  ecs_add(world, wall, CollisionBox);
 
-  Position *pos = ecs_get_mut(world, player, Position);
+  Position *pos = ecs_get_mut(world, wall, Position);
   assert(pos);
-  pos->x = 640 / 2;
-  pos->y = 480 / 2 - 100;
+  pos->x = 192;
+  pos->y = 96 - 64;
 
-  RectSprite *rect = ecs_get_mut(world, player, RectSprite);
+  RectSprite *rect = ecs_get_mut(world, wall, RectSprite);
   assert(rect);
   rect->color             = BLUE;
   rect->dimensions.x      = pos->x;
@@ -148,7 +149,7 @@ void wall_init(ecs_world_t *world) {
   rect->dimensions.width  = 150;
   rect->dimensions.height = 4;
 
-  CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
+  CollisionBox *collision = ecs_get_mut(world, wall, CollisionBox);
   assert(collision);
   *collision = rect->dimensions;
 }
