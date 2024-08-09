@@ -4,6 +4,9 @@ project("Escape The Mansion")
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(ASSETS_DIR ./assets)
 
 add_subdirectory(libs)

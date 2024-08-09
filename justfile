@@ -1,13 +1,15 @@
+BUILD_DIR := justfile_directory() / "build"
 BIN_OUT := justfile_directory() / "escape-the-mansion"
 
 run: build
   {{BIN_OUT}}
 
 build:
-  bear -- make
+  mkdir -p {{BUILD_DIR}}
+  cmake --build {{BUILD_DIR}}  .
 
 clean:
-  make clean
+  -cmake --build {{BUILD_DIR}} --target clean .
 
 debug:
   gdb {{BIN_OUT}}
@@ -19,7 +21,7 @@ rrespacker:
   xdg-open https://raylibtech.itch.io/rrespacker
 
 code-count:
-  tokei ./src ./Makefile
+  tokei ./src
 
 tiled:
   tiled ./assets/escape-the-mansion.tiled-session
