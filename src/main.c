@@ -35,8 +35,8 @@ static void system_camera_draw_begin(ecs_iter_t *it);
 static void system_camera_draw_end(ecs_iter_t *it);
 
 int main(void) {
-  ecs_world_t *world = world_init();
   window_init();
+  ecs_world_t *world = world_init();
   player_init(world);
   wall_init(world);
   while (!WindowShouldClose() && IsWindowReady()) {

@@ -13,13 +13,35 @@ Sprite load_walk_sprite() {
   return walk_sprite;
 }
 
-static void load_tiled() {
-  tmx_map *test_room = tmx_load("./assets/test-room.tmx");
-  if (test_room == NULL) {
-    const char *err = tmx_strerr();
-    printf("%s\n", err);
-    exit(1);
+static void *load_tiled_img(const char *path) {
+  Texture2D *img = NULL;
+  img            = tmx_alloc_func(img, sizeof(Texture2D));
+  if (img == NULL) {
+    return img;
   }
+
+  *img = LoadTexture(path);
+
+  return img;
+}
+
+static void free_tiled_img(void *img) {
+  tmx_free_func(img);
+}
+
+tmx_map *load_tiled() {
+  static tmx_map *test_room = NULL;
+  if (test_room == NULL) {
+    tmx_img_load_func = load_tiled_img;
+    tmx_img_free_func = free_tiled_img;
+    test_room         = tmx_load("./assets/test-room.tmx");
+    if (test_room == NULL) {
+      const char *err = tmx_strerr();
+      printf("%s\n", err);
+      exit(1);
+    }
+  }
+  return test_room;
 }
 
 void ResourcesImport(ecs_world_t *world) {

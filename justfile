@@ -23,7 +23,7 @@ alias rb := rebuild
 rebuild: clean build
 
 alias dbg := debug
-debug:
+debug: build
   gdb {{BIN_OUT}}
 
 format:
