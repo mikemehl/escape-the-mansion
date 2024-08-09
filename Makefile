@@ -4,7 +4,7 @@ LIBS_DIR := ./libs
 BUILD_DIR := ./build
 
 SRCS := $(shell find $(SRC_DIR) -name '*.c')
-SRCS += $(shell find $(LIBS_DIR) -name '*.c')
+SRCS += $(shell find $(LIBS_DIR) -name '*.c' -not -path '*/libtmj/*')
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
@@ -16,7 +16,7 @@ RAYLIB_FLAGS := $(shell pkg-config --cflags --libs raylib)
 CFLAGS := -g $(INC_FLAGS) -MMD -MP -Wall -Wextra $(RAYLIB_FLAGS) -std=gnu99
 LDFLAGS := $(RAYLIB_FLAGS)
 
-$(BIN): $(OBJS)
+$(BIN): $(OBJS) $(LIBTMJ)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
 $(BUILD_DIR)/%.c.o: %.c 

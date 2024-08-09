@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "character.tsx",
+    "activeFile": "test-room.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -27,8 +27,8 @@
             "scale": 11,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 132.04545454545456,
-                "y": 64.63636363636364
+                "x": 131.8181818181818,
+                "y": 63.54545454545455
             }
         },
         "test-room.tmx#HauntedHouseProps": {
@@ -41,7 +41,7 @@
     "last.exportedFilePath": "/home/mike/code/escape-the-mansion/assets",
     "last.imagePath": "/home/mike/code/escape-the-mansion/assets/characters",
     "lastUsedTilesetExportFilter": "Lua files (*.lua)",
-    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 8,
     "map.tileWidth": 8,
@@ -55,8 +55,8 @@
     "recentFiles": [
         "haunted-house.tsx",
         "props.tsx",
-        "test-room.tmx",
-        "character.tsx"
+        "character.tsx",
+        "test-room.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.margin": 4,

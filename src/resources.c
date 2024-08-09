@@ -21,7 +21,8 @@ void ResourcesImport(ecs_world_t *world) {
 
 static void load_tiled() {
   cute_tiled_map_t *test_room =
-      cute_tiled_load_map_from_file("../assets/test-room.json", NULL);
-  cute_tiled_map_t *character =
-      cute_tiled_load_map_from_file("../assets/character.json", NULL);
+      cute_tiled_load_map_from_file("../assets/test-room.tmj", NULL);
+  assert(test_room);
+  /* cute_tiled_map_t *character = */
+  /*     cute_tiled_load_map_from_file("../assets/character.json", NULL); */
 }
