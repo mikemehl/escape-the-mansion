@@ -1,7 +1,7 @@
 #include "resources.h"
+#include "tmx.h"
 #include <raylib.h>
-
-#include "cute_tiled.h"
+#include <stdlib.h>
 
 ECS_COMPONENT_DECLARE(Sprite);
 
@@ -13,15 +13,17 @@ Sprite load_walk_sprite() {
   return walk_sprite;
 }
 
+static void load_tiled() {
+  tmx_map *test_room = tmx_load("./assets/test-room.tmx");
+  if (test_room == NULL) {
+    const char *err = tmx_strerr();
+    printf("%s\n", err);
+    exit(1);
+  }
+}
+
 void ResourcesImport(ecs_world_t *world) {
   ECS_MODULE(world, Resources);
   ECS_COMPONENT_DEFINE(world, Sprite);
-}
-
-static void load_tiled() {
-  cute_tiled_map_t *test_room =
-      cute_tiled_load_map_from_file("../assets/test-room.tmj", NULL);
-  assert(test_room);
-  /* cute_tiled_map_t *character = */
-  /*     cute_tiled_load_map_from_file("../assets/character.json", NULL); */
+  load_tiled();
 }

@@ -14,5 +14,4 @@ add_executable(escape-the-mansion ./src/input.c ./src/main.c ./src/physics.c
                                   ./src/render.c ./src/resources.c)
 target_include_directories(escape-the-mansion PUBLIC ./src ./libs/flecs ./libs
                                                      ./libs/libtmj/include)
-target_link_libraries(escape-the-mansion PUBLIC flecs cute_tiled -lraylib
-                                                ${CMAKE_BINARY_DIR}/libtmj.a)
+target_link_libraries(escape-the-mansion PUBLIC flecs raylib tmx)
