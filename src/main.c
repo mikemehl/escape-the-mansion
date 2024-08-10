@@ -10,7 +10,6 @@
 #include "resources.h"
 
 ECS_TAG_DECLARE(Player);
-ECS_SYSTEM_DECLARE(system_rectsprite_draw);
 ECS_SYSTEM_DECLARE(system_player_update);
 ECS_QUERY_DECLARE(PlayerCollisionQuery);
 
@@ -26,7 +25,6 @@ static void world_close(ecs_world_t *);
 static void player_init(ecs_world_t *);
 static void wall_init(ecs_world_t *);
 
-static void system_rectsprite_draw(ecs_iter_t *);
 static void system_player_update(ecs_iter_t *);
 static void system_camera_update(ecs_iter_t *it);
 static void system_camera_draw_begin(ecs_iter_t *it);
@@ -41,7 +39,7 @@ int main(void) {
     BeginDrawing();
     ClearBackground(GRAY);
     ecs_run(world, ecs_id(system_camera_draw_begin), 0, NULL);
-    ecs_run(world, ecs_id(system_rectsprite_draw), 0, NULL);
+    ecs_run(world, ecs_id(SystemDrawRectSprite), 0, NULL);
     ecs_run(world, ecs_id(SystemDrawSprite), 0, NULL);
     ecs_run(world, ecs_id(system_camera_draw_end), 0, NULL);
     EndDrawing();
@@ -67,8 +65,6 @@ ecs_world_t *world_init() {
   ECS_TAG_DEFINE(world, Player);
   ECS_QUERY_DEFINE(world, PlayerCollisionQuery, physics.Position,
                    physics.CollisionBox, !Player);
-  ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, physics.Position,
-                    render.RectSprite);
   ECS_SYSTEM_DEFINE(world, system_player_update, 0, physics.Position, Player,
                     render.RectSprite, physics.CollisionBox);
   ECS_SYSTEM_DEFINE(world, system_camera_draw_begin, 0, render.CameraFollow);
@@ -116,6 +112,7 @@ void player_init(ecs_world_t *world) {
   assert(camera);
   camera->zoom     = 4.0f;
   camera->target   = *pos;
+  camera->rotation = 0.0;
   camera->offset.x = 640 / 2;
   camera->offset.y = 480 / 2;
 }
@@ -143,18 +140,6 @@ void wall_init(ecs_world_t *world) {
   CollisionBox *collision = ecs_get_mut(world, wall, CollisionBox);
   assert(collision);
   *collision = rect->dimensions;
-}
-
-void system_rectsprite_draw(ecs_iter_t *it) {
-  Position   *p = ecs_field(it, Position, 0);
-  RectSprite *r = ecs_field(it, RectSprite, 1);
-  assert(p);
-  assert(r);
-
-  for (int i = 0; i < it->count; i++) {
-    DrawRectangle(p[i].x, p[i].y, r[i].dimensions.width, r[i].dimensions.height,
-                  r[i].color);
-  }
 }
 
 void system_player_update(ecs_iter_t *it) {

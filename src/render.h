@@ -13,6 +13,7 @@ typedef Camera2D CameraFollow;
 extern ECS_COMPONENT_DECLARE(RectSprite);
 extern ECS_COMPONENT_DECLARE(CameraFollow);
 extern ECS_SYSTEM_DECLARE(SystemDrawSprite);
+extern ECS_SYSTEM_DECLARE(SystemDrawRectSprite);
 
 void RenderImport(ecs_world_t *world);
 void RenderRoom();
