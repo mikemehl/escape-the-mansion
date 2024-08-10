@@ -41,6 +41,31 @@ static void LoadTiled(ecs_world_t *world) {
   ecs_singleton_set_ptr(world, Tiled, test_room);
 }
 
+Vector2 GetPlayerStartPoint(ecs_world_t *world) {
+  const Tiled *tiled = ecs_singleton_get(world, Tiled);
+  assert(tiled);
+  tmx_layer *layer = tiled->ly_head;
+  assert(layer);
+  while (layer) {
+    if (layer->type != L_OBJGR) {
+      layer = layer->next;
+      continue;
+    }
+    tmx_object *obj = layer->content.objgr->head;
+    while (obj) {
+      if (obj->obj_type != OT_POINT) {
+        obj = obj->next;
+        continue;
+      }
+      Vector2 start = {.x = obj->x, .y = obj->y};
+      return start;
+    }
+    layer = layer->next;
+  }
+  Vector2 start = {.x = 0, .y = 0};
+  return start;
+}
+
 void ResourcesImport(ecs_world_t *world) {
   ECS_MODULE(world, Resources);
   ECS_COMPONENT_DEFINE(world, Sprite);

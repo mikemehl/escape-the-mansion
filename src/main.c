@@ -42,7 +42,7 @@ int main(void) {
     ClearBackground(GRAY);
     ecs_run(world, ecs_id(system_camera_draw_begin), 0, NULL);
     ecs_run(world, ecs_id(system_rectsprite_draw), 0, NULL);
-    ecs_run(world, ecs_id(system_draw_sprite), 0, NULL);
+    ecs_run(world, ecs_id(SystemDrawSprite), 0, NULL);
     ecs_run(world, ecs_id(system_camera_draw_end), 0, NULL);
     EndDrawing();
     ecs_run(world, ecs_id(system_player_update), 0, NULL);
@@ -94,8 +94,7 @@ void player_init(ecs_world_t *world) {
 
   Position *pos = ecs_get_mut(world, player, Position);
   assert(pos);
-  pos->x = 192;
-  pos->y = 96;
+  *pos = GetPlayerStartPoint(world);
 
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
