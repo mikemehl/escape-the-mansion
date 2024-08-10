@@ -15,7 +15,7 @@ extern ECS_COMPONENT_DECLARE(Sprite);
 extern ECS_COMPONENT_DECLARE(Tiled);
 
 void    ResourcesImport(ecs_world_t *world);
-Sprite  load_walk_sprite();
+Sprite  LoadWalkSprite();
 Vector2 GetPlayerStartPoint(ecs_world_t *world);
 
 #endif

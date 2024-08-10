@@ -17,6 +17,7 @@ extern ECS_SYSTEM_DECLARE(SystemDrawRectSprite);
 extern ECS_SYSTEM_DECLARE(SystemCameraDrawBegin);
 extern ECS_SYSTEM_DECLARE(SystemCameraDrawEnd);
 extern ECS_SYSTEM_DECLARE(SystemCameraUpdate);
+extern ECS_SYSTEM_DECLARE(SystemDrawRoom);
 
 void RenderImport(ecs_world_t *world);
 void RenderRoom();

@@ -27,6 +27,7 @@ int main(void) {
     BeginDrawing();
     ClearBackground(GRAY);
     ecs_run(world, ecs_id(SystemCameraDrawBegin), 0, NULL);
+    ecs_run(world, ecs_id(SystemDrawRoom), 0, NULL);
     ecs_run(world, ecs_id(SystemDrawRectSprite), 0, NULL);
     ecs_run(world, ecs_id(SystemDrawSprite), 0, NULL);
     ecs_run(world, ecs_id(SystemCameraDrawEnd), 0, NULL);
@@ -86,7 +87,7 @@ void player_init(ecs_world_t *world) {
 
   Sprite *sprite = ecs_get_mut(world, player, Sprite);
   assert(sprite);
-  *sprite = load_walk_sprite();
+  *sprite = LoadWalkSprite();
 
   CameraFollow *camera = ecs_get_mut(world, player, CameraFollow);
   assert(camera);

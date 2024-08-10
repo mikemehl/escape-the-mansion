@@ -6,7 +6,7 @@
 ECS_COMPONENT_DECLARE(Sprite);
 ECS_COMPONENT_DECLARE(Tiled);
 
-Sprite load_walk_sprite() {
+Sprite LoadWalkSprite() {
   Texture2D walk = LoadTexture("./assets/characters/HumanTownsfolkWalk.png");
   Sprite    walk_sprite = {
          .texture = walk, .area = {.x = 12, .y = 10, .width = 8, .height = 10}
