@@ -10,7 +10,6 @@
 #include "resources.h"
 
 ECS_TAG_DECLARE(Player);
-ECS_SYSTEM_DECLARE(system_gather_input);
 ECS_SYSTEM_DECLARE(system_rectsprite_draw);
 ECS_SYSTEM_DECLARE(system_player_update);
 ECS_QUERY_DECLARE(PlayerCollisionQuery);
@@ -29,7 +28,6 @@ static void wall_init(ecs_world_t *);
 
 static void system_rectsprite_draw(ecs_iter_t *);
 static void system_player_update(ecs_iter_t *);
-static void system_gather_input(ecs_iter_t *);
 static void system_camera_update(ecs_iter_t *it);
 static void system_camera_draw_begin(ecs_iter_t *it);
 static void system_camera_draw_end(ecs_iter_t *it);
@@ -43,14 +41,13 @@ int main(void) {
     BeginDrawing();
     ClearBackground(GRAY);
     ecs_run(world, ecs_id(system_camera_draw_begin), 0, NULL);
-    RenderRoom();
     ecs_run(world, ecs_id(system_rectsprite_draw), 0, NULL);
     ecs_run(world, ecs_id(system_draw_sprite), 0, NULL);
     ecs_run(world, ecs_id(system_camera_draw_end), 0, NULL);
     EndDrawing();
     ecs_run(world, ecs_id(system_player_update), 0, NULL);
     ecs_run(world, ecs_id(system_camera_update), 0, NULL);
-    ecs_run(world, ecs_id(system_gather_input), 0, NULL);
+    ecs_run(world, ecs_id(SystemGatherInput), 0, NULL);
   }
   world_close(world);
   return 0;
@@ -67,14 +64,9 @@ ecs_world_t *world_init() {
   ECS_IMPORT(world, Resources);
   ECS_IMPORT(world, Render);
   ECS_IMPORT(world, Input);
-  ecs_singleton_set(
-      world, InputActions,
-      {.up = false, .down = false, .left = false, .right = false});
   ECS_TAG_DEFINE(world, Player);
   ECS_QUERY_DEFINE(world, PlayerCollisionQuery, physics.Position,
                    physics.CollisionBox, !Player);
-  ECS_SYSTEM_DEFINE(world, system_gather_input, EcsOnUpdate,
-                    input.InputActions($));
   ECS_SYSTEM_DEFINE(world, system_rectsprite_draw, 0, physics.Position,
                     render.RectSprite);
   ECS_SYSTEM_DEFINE(world, system_player_update, 0, physics.Position, Player,
@@ -211,19 +203,6 @@ void system_player_update(ecs_iter_t *it) {
   rs->dimensions.y = pos->y;
   cb->x            = pos->x;
   cb->y            = pos->y;
-}
-
-void system_gather_input(ecs_iter_t *it) {
-  InputActions *input = ecs_field(it, InputActions, 0);
-  assert(input);
-  if (IsKeyDown(KEY_Q)) {
-    CloseWindow();
-    return;
-  }
-  input->up    = IsKeyDown(KEY_W);
-  input->down  = IsKeyDown(KEY_S);
-  input->right = IsKeyDown(KEY_D);
-  input->left  = IsKeyDown(KEY_A);
 }
 
 void system_camera_draw_begin(ecs_iter_t *it) {

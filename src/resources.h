@@ -9,10 +9,12 @@ typedef struct Sprite {
   Rectangle area;
 } Sprite;
 
-extern ECS_COMPONENT_DECLARE(Sprite);
+typedef tmx_map *Tiled;
 
-void     ResourcesImport(ecs_world_t *world);
-tmx_map *load_tiled();
-Sprite   load_walk_sprite();
+extern ECS_COMPONENT_DECLARE(Sprite);
+extern ECS_COMPONENT_DECLARE(Tiled);
+
+void   ResourcesImport(ecs_world_t *world);
+Sprite load_walk_sprite();
 
 #endif

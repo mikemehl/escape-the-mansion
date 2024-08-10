@@ -11,6 +11,7 @@ typedef struct InputActions {
 } InputActions;
 
 extern ECS_COMPONENT_DECLARE(InputActions);
+extern ECS_SYSTEM_DECLARE(SystemGatherInput);
 
 void InputImport(ecs_world_t *world);
 
