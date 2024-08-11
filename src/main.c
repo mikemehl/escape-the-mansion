@@ -27,8 +27,7 @@ static void AddWalls(ecs_world_t *world) {
     layer = layer->next;
   }
   assert(layer);
-  int       wall_cnt = 0;
-  uint32_t *cells    = layer->content.gids;
+  uint32_t *cells = layer->content.gids;
   for (uint32_t x = 0; x < tiled->width; x++) {
     for (uint32_t y = 0; y < tiled->height; y++) {
       uint32_t gid = cells[x + y * tiled->width] & TMX_FLIP_BITS_REMOVAL;
@@ -43,7 +42,6 @@ static void AddWalls(ecs_world_t *world) {
       ecs_add(world, wall, CollisionBox);
       Position p = {.x = x * tiled->tile_width, .y = y * tiled->tile_height};
 
-      printf("%f, %f\n", p.x, p.y);
       Position     *pos = ecs_get_mut(world, wall, Position);
       CollisionBox *box = ecs_get_mut(world, wall, CollisionBox);
       assert(pos);
@@ -54,7 +52,6 @@ static void AddWalls(ecs_world_t *world) {
       box->y      = p.y;
       box->width  = w;
       box->height = h;
-      wall_cnt++;
     }
   }
 }

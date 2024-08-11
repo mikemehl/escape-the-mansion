@@ -7,6 +7,9 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy" REQUIRED)
+set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}")
+
 set(ASSETS_DIR ./assets)
 
 add_subdirectory(libs)
@@ -15,3 +18,4 @@ add_executable(escape-the-mansion ./src/input.c ./src/main.c ./src/physics.c
 target_include_directories(escape-the-mansion PUBLIC ./src ./libs/flecs ./libs
                                                      ./libs/libtmj/include)
 target_link_libraries(escape-the-mansion PUBLIC flecs raylib tmx)
+set_target_properties(escape-the-mansion PROPERTIES C_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
