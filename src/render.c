@@ -87,7 +87,6 @@ static void SystemDrawRoom(ecs_iter_t *it) {
     for (uint32_t x = 0; x < tiled->width; x++) {
       for (uint32_t y = 0; y < tiled->height; y++) {
         uint32_t gid = cells[x + y * tiled->width] & TMX_FLIP_BITS_REMOVAL;
-        printf("%d\n", gid);
         if (gid != 0) {
           tmx_tile *tile = tiles[gid];
           assert(tile);

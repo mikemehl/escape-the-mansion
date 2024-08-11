@@ -10,6 +10,8 @@
 #include "render.h"
 #include "resources.h"
 
+#define TILED_WALL_LAYER 2
+
 static void window_init();
 
 static ecs_world_t *world_init();
@@ -18,11 +20,51 @@ static void world_close(ecs_world_t *);
 static void player_init(ecs_world_t *);
 static void wall_init(ecs_world_t *);
 
+static void AddWalls(ecs_world_t *world) {
+  const Tiled *tiled = ecs_singleton_get(world, Tiled);
+  tmx_layer   *layer = tiled->ly_head;
+  while (layer && layer->id != TILED_WALL_LAYER) {
+    layer = layer->next;
+  }
+  assert(layer);
+  int       wall_cnt = 0;
+  uint32_t *cells    = layer->content.gids;
+  for (uint32_t x = 0; x < tiled->width; x++) {
+    for (uint32_t y = 0; y < tiled->height; y++) {
+      uint32_t gid = cells[x + y * tiled->width] & TMX_FLIP_BITS_REMOVAL;
+      if (gid == 0) {
+        continue;
+      }
+      tmx_tile    *tile = tiled->tiles[gid];
+      uint32_t     w    = tile->width;
+      uint32_t     h    = tile->height;
+      ecs_entity_t wall = ecs_new(world);
+      ecs_add(world, wall, Position);
+      ecs_add(world, wall, CollisionBox);
+      Position p = {.x = x * tiled->tile_width, .y = y * tiled->tile_height};
+
+      printf("%f, %f\n", p.x, p.y);
+      Position     *pos = ecs_get_mut(world, wall, Position);
+      CollisionBox *box = ecs_get_mut(world, wall, CollisionBox);
+      assert(pos);
+      assert(box);
+      pos->x      = p.x;
+      pos->y      = p.y;
+      box->x      = p.x;
+      box->y      = p.y;
+      box->width  = w;
+      box->height = h;
+      wall_cnt++;
+    }
+  }
+}
+
 int main(void) {
   window_init();
   ecs_world_t *world = world_init();
   player_init(world);
   wall_init(world);
+  AddWalls(world);
   while (!WindowShouldClose() && IsWindowReady()) {
     BeginDrawing();
     ClearBackground(GRAY);
@@ -47,8 +89,8 @@ void window_init() {
 
 ecs_world_t *world_init() {
   ecs_world_t *world = ecs_init();
-  ECS_IMPORT(world, Physics);
   ECS_IMPORT(world, Resources);
+  ECS_IMPORT(world, Physics);
   ECS_IMPORT(world, Render);
   ECS_IMPORT(world, Input);
   ECS_IMPORT(world, Player);

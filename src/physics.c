@@ -1,4 +1,5 @@
 #include "physics.h"
+#include "resources.h"
 
 ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Velocity);
