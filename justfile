@@ -17,6 +17,7 @@ clean:
 
 alias gc := git-clean
 git-clean:
+  -rm -rf ./build
   git clean -fxd
 
 alias rb := rebuild
