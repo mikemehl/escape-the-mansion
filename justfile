@@ -29,9 +29,6 @@ debug: build
 format:
   fd . ./src -e c -e h -x clang-format -i {}
 
-rrespacker:
-  xdg-open https://raylibtech.itch.io/rrespacker
-
 code-count:
   tokei ./src
 
