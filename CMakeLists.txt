@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.30.2)
 include(FetchContent)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_GENERATOR "Ninja")
+
 project("Escape The Mansion")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
