@@ -47,6 +47,12 @@ static void LoadTiled(ecs_world_t *world) {
 
 AnimatedSprite *GetPlayerAnimation(ecs_world_t *const world,
                                    uint32_t *const    num_sprites) {
+  static int call_count = 0;
+  if (call_count == 0) {
+    call_count++;
+  } else {
+    exit(666);
+  }
   AnimatedSprite *sprites = NULL;
   *num_sprites            = 0;
   const Tiled *tiled      = ecs_singleton_get(world, Tiled);
@@ -71,8 +77,14 @@ AnimatedSprite *GetPlayerAnimation(ecs_world_t *const world,
       uint32_t        num_frames = tslist->tileset->tiles[i].animation_len;
       Sprite         *frames =
           arena_alloc(&ResourcesArena, num_frames * sizeof(Sprite));
+      uint32_t *durations =
+          arena_alloc(&ResourcesArena, num_frames * sizeof(uint32_t));
       sprites[*num_sprites - 1].frames     = frames;
+      sprites[*num_sprites - 1].durations  = durations;
       sprites[*num_sprites - 1].num_frames = num_frames;
+      sprites[*num_sprites - 1].curr_frame = 0;
+      sprites[*num_sprites - 1].frame_time = 0;
+      sprites[*num_sprites - 1].paused     = false;
       for (int j = 0; j < num_frames; j++) {
         uint32_t              gid        = anim[j].tile_id + tslist->firstgid;
         tmx_tile const *const frame_tile = tiled->tiles[gid];
@@ -83,6 +95,7 @@ AnimatedSprite *GetPlayerAnimation(ecs_world_t *const world,
         frames[j].area.y      = frame_tile->ul_y;
         frames[j].area.width  = frame_tile->width;
         frames[j].area.height = frame_tile->height;
+        durations[j]          = anim[j].duration;
       }
     }
     tslist = tslist->next;
@@ -125,8 +138,4 @@ void ResourcesImport(ecs_world_t *world) {
   ECS_COMPONENT_DEFINE(world, Tiled);
   ECS_COMPONENT_DEFINE(world, AnimatedSprite);
   LoadTiled(world);
-  uint32_t        num_sprites = 666;
-  AnimatedSprite *sprites     = GetPlayerAnimation(world, &num_sprites);
-  assert(sprites);
-  assert(num_sprites == 4);
 }

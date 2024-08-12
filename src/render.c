@@ -12,6 +12,7 @@ ECS_SYSTEM_DECLARE(SystemCameraDrawBegin);
 ECS_SYSTEM_DECLARE(SystemCameraDrawEnd);
 ECS_SYSTEM_DECLARE(SystemCameraUpdate);
 ECS_SYSTEM_DECLARE(SystemDrawRoom);
+ECS_SYSTEM_DECLARE(SystemDrawAnimatedSprite);
 
 static void SystemDrawSprite(ecs_iter_t *it) {
   Position *p      = ecs_field(it, Position, 0);
@@ -100,6 +101,25 @@ static void SystemDrawRoom(ecs_iter_t *it) {
   }
 }
 
+static void SystemDrawAnimatedSprite(ecs_iter_t *it) {
+  AnimatedSprite *const sprite = ecs_field(it, AnimatedSprite, 0);
+  Position const *const pos    = ecs_field(it, Position, 1);
+  assert(sprite);
+  assert(pos);
+  for (int i = 0; i < it->count; i++) {
+    Sprite curr_frame = sprite[i].frames[sprite->curr_frame];
+    DrawTextureRec(curr_frame.texture, curr_frame.area, pos[i], WHITE);
+    if (sprite[i].paused) {
+      continue;
+    }
+    sprite[i].frame_time += 10;
+    if (sprite[i].frame_time >= sprite[i].durations[sprite[i].curr_frame]) {
+      sprite[i].frame_time = 0;
+      sprite[i].curr_frame = (sprite[i].curr_frame + 1) % sprite[i].num_frames;
+    }
+  }
+}
+
 void RenderImport(ecs_world_t *world) {
   ECS_MODULE(world, Render);
   ECS_COMPONENT_DEFINE(world, RectSprite);
@@ -112,5 +132,7 @@ void RenderImport(ecs_world_t *world) {
   ECS_SYSTEM_DEFINE(world, SystemCameraDrawEnd, 0, render.CameraFollow);
   ECS_SYSTEM_DEFINE(world, SystemCameraUpdate, 0, render.CameraFollow,
                     physics.Position);
+  ECS_SYSTEM_DEFINE(world, SystemDrawAnimatedSprite, 0,
+                    resources.AnimatedSprite, physics.Position);
   ECS_SYSTEM_DEFINE(world, SystemDrawRoom, 0, resources.Tiled($));
 }
