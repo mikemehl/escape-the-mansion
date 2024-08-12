@@ -3,11 +3,14 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "test-room.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
         "character.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1,
@@ -27,8 +30,8 @@
             "scale": 4,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 128.5,
-                "y": 64.75
+                "x": 120,
+                "y": 80
             }
         },
         "test-room.tmx#HauntedHouseProps": {
@@ -36,9 +39,11 @@
         },
         "test-room.tmx#character": {
             "dynamicWrapping": false,
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "test-room.tmx#haunted-house": {
+            "dynamicWrapping": false,
             "scaleInDock": 1
         }
     },
@@ -50,17 +55,14 @@
     "map.tileHeight": 8,
     "map.tileWidth": 8,
     "openFiles": [
-        "haunted-house.tsx",
-        "props.tsx",
-        "test-room.tmx",
-        "character.tsx"
+        "test-room.tmx"
     ],
     "project": "escape-the-mansion.tiled-project",
     "recentFiles": [
+        "test-room.tmx",
         "haunted-house.tsx",
         "props.tsx",
-        "character.tsx",
-        "test-room.tmx"
+        "character.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.margin": 4,

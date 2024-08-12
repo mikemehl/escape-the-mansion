@@ -91,10 +91,10 @@ AnimatedSprite *GetPlayerAnimation(ecs_world_t *const world,
         assert(frame_tile);
         frames[j].texture =
             *((Texture2D *)tslist->tileset->image->resource_image);
-        frames[j].area.x      = frame_tile->ul_x;
-        frames[j].area.y      = frame_tile->ul_y;
-        frames[j].area.width  = frame_tile->width;
-        frames[j].area.height = frame_tile->height;
+        frames[j].area.x      = frame_tile->ul_x + tslist->tileset->x_offset;
+        frames[j].area.y      = frame_tile->ul_y + tslist->tileset->y_offset;
+        frames[j].area.width  = frame_tile->width - tslist->tileset->x_offset;
+        frames[j].area.height = frame_tile->height - tslist->tileset->y_offset;
         durations[j]          = anim[j].duration;
       }
     }

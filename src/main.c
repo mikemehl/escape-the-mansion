@@ -100,7 +100,6 @@ void player_init(ecs_world_t *world) {
   ecs_add(world, player, Position);
   ecs_add(world, player, RectSprite);
   ecs_add(world, player, CollisionBox);
-  ecs_add(world, player, Sprite);
   ecs_add(world, player, CameraFollow);
   ecs_add(world, player, AnimatedSprite);
 
@@ -119,10 +118,6 @@ void player_init(ecs_world_t *world) {
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
   assert(collision);
   *collision = (rect->dimensions);
-
-  Sprite *sprite = ecs_get_mut(world, player, Sprite);
-  assert(sprite);
-  *sprite = LoadWalkSprite();
 
   CameraFollow *camera = ecs_get_mut(world, player, CameraFollow);
   assert(camera);

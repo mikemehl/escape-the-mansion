@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.0" name="character" tilewidth="32" tileheight="32" tilecount="225" columns="4">
+<tileset version="1.10" tiledversion="1.11.0" name="character" tilewidth="32" tileheight="32" tilecount="16" columns="4">
+ <tileoffset x="4" y="4"/>
  <grid orientation="orthogonal" width="16" height="16"/>
  <image source="characters/HumanTownsfolkWalk.png" width="128" height="128"/>
  <tile id="3">
