@@ -5,6 +5,7 @@
 
 ECS_COMPONENT_DECLARE(Sprite);
 ECS_COMPONENT_DECLARE(Tiled);
+ECS_COMPONENT_DECLARE(AnimatedSprite);
 
 Sprite LoadWalkSprite() {
   Texture2D walk = LoadTexture("./assets/characters/HumanTownsfolkWalk.png");
@@ -41,6 +42,44 @@ static void LoadTiled(ecs_world_t *world) {
   ecs_singleton_set_ptr(world, Tiled, test_room);
 }
 
+void GetPlayerAnimation(ecs_world_t *world) {
+  const Tiled *tiled = ecs_singleton_get(world, Tiled);
+  assert(tiled);
+  tmx_tileset_list *tslist = tiled->ts_head;
+  while (tslist) {
+    if (strcmp("character", tslist->tileset->name) != 0) {
+      tslist = tslist->next;
+      continue;
+    }
+    tmx_tile *tiles = tslist->tileset->tiles;
+    for (int i = 0; i < tslist->tileset->tilecount; i++) {
+      if (!tiles[i].animation) {
+        continue;
+      }
+      tmx_anim_frame *anim          = tslist->tileset->tiles[i].animation;
+      uint32_t        num_frames    = tslist->tileset->tiles[i].animation_len;
+      Sprite         *frames        = malloc(num_frames * sizeof(Sprite));
+      AnimatedSprite  anim_resource = {.frames     = frames,
+                                       .num_frames = num_frames};
+      for (int j = 0; j < num_frames; j++) {
+        uint32_t              gid        = anim[j].tile_id + tslist->firstgid;
+        tmx_tile const *const frame_tile = tiled->tiles[gid];
+        assert(frame_tile);
+        frames[j].texture =
+            *((Texture2D *)tslist->tileset->image->resource_image);
+        frames[j].area.x      = frame_tile->ul_x;
+        frames[j].area.y      = frame_tile->ul_y;
+        frames[j].area.width  = frame_tile->width;
+        frames[j].area.height = frame_tile->height;
+      }
+
+      // TODO: Load the frames somewhere.
+      free(frames);
+    }
+    tslist = tslist->next;
+  }
+}
+
 Vector2 GetPlayerStartPoint(ecs_world_t *world) {
   const Tiled *tiled = ecs_singleton_get(world, Tiled);
   assert(tiled);
@@ -70,5 +109,7 @@ void ResourcesImport(ecs_world_t *world) {
   ECS_MODULE(world, Resources);
   ECS_COMPONENT_DEFINE(world, Sprite);
   ECS_COMPONENT_DEFINE(world, Tiled);
+  ECS_COMPONENT_DEFINE(world, AnimatedSprite);
   LoadTiled(world);
+  GetPlayerAnimation(world);
 }

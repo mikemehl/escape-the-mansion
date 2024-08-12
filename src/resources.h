@@ -11,8 +11,14 @@ typedef struct Sprite {
 
 typedef tmx_map Tiled;
 
+typedef struct AnimatedSprite {
+  Sprite  *frames;
+  uint32_t num_frames;
+} AnimatedSprite;
+
 extern ECS_COMPONENT_DECLARE(Sprite);
 extern ECS_COMPONENT_DECLARE(Tiled);
+extern ECS_COMPONENT_DECLARE(AnimatedSprite);
 
 void    ResourcesImport(ecs_world_t *world);
 Sprite  LoadWalkSprite();
