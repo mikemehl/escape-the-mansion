@@ -7,6 +7,7 @@ set(CMAKE_GENERATOR "Ninja")
 project("Escape The Mansion")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 set(BUILD_EXAMPLES OFF)
 set(FLECS_SHARED OFF)
@@ -41,6 +42,6 @@ set_target_properties(
   escape-the-mansion PROPERTIES CMAKE_C_FLAGS
                                 "${CMAKE_C_FLAGS} -g -Wall -Wextra")
 
-set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_CPPCHECK "cppcheck")
-set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_CLANG_TIDY
-                                                    "clang-tidy")
+set_target_properties(escape-the-mansion PROPERTIES C_CPPCHECK "cppcheck")
+set_target_properties(escape-the-mansion PROPERTIES C_CLANG_TIDY
+                                                    "clang-tidy;--use-color")
