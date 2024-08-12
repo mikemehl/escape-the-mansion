@@ -89,6 +89,7 @@ ecs_world_t *world_init() {
 
 void world_close(ecs_world_t *world) {
   ecs_fini(world);
+  FreeResources();
 }
 
 void player_init(ecs_world_t *world) {

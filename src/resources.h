@@ -23,5 +23,6 @@ extern ECS_COMPONENT_DECLARE(AnimatedSprite);
 void    ResourcesImport(ecs_world_t *world);
 Sprite  LoadWalkSprite();
 Vector2 GetPlayerStartPoint(ecs_world_t *world);
+void    FreeResources();
 
 #endif

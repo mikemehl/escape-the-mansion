@@ -27,13 +27,25 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/baylej/tmx
   GIT_TAG tmx_1.10.0)
 
-FetchContent_MakeAvailable(raylib flecs libtmx)
+FetchContent_Declare(
+  arena
+  GIT_REPOSITORY https://github.com/tsoding/arena
+  GIT_TAG c2d1c1ce4360d13d5fb94201bfb72cc34a22fa69)
+
+FetchContent_MakeAvailable(raylib flecs libtmx arena)
 
 add_executable(
-  escape-the-mansion ./src/input.c ./src/main.c ./src/physics.c ./src/render.c
-                     ./src/resources.c ./src/player.c)
-target_include_directories(escape-the-mansion
-                           PUBLIC ./src "${CMAKE_CURRENT_LIST_DIR}/include")
+  escape-the-mansion
+  ./src/input.c
+  ./src/main.c
+  ./src/physics.c
+  ./src/render.c
+  ./src/resources.c
+  ./src/player.c
+  ./src/arena.c)
+target_include_directories(
+  escape-the-mansion PUBLIC ./src "${CMAKE_CURRENT_LIST_DIR}/include"
+                            ${arena_SOURCE_DIR})
 target_link_libraries(escape-the-mansion PUBLIC flecs_static raylib tmx)
 set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_STANDARD 99)
 set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_STANDARD_REQUIRED
