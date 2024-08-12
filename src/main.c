@@ -9,8 +9,9 @@
 #include "player.h"
 #include "render.h"
 #include "resources.h"
+#include "tmx.h"
 
-#define TILED_WALL_LAYER 2
+#define TILED_WALL_LAYER 5
 
 static void window_init();
 
@@ -27,32 +28,25 @@ static void AddWalls(ecs_world_t *world) {
     layer = layer->next;
   }
   assert(layer);
-  uint32_t *cells = layer->content.gids;
-  for (uint32_t x = 0; x < tiled->width; x++) {
-    for (uint32_t y = 0; y < tiled->height; y++) {
-      uint32_t gid = cells[x + y * tiled->width] & TMX_FLIP_BITS_REMOVAL;
-      if (gid == 0) {
-        continue;
-      }
-      tmx_tile    *tile = tiled->tiles[gid];
-      uint32_t     w    = tile->width;
-      uint32_t     h    = tile->height;
-      ecs_entity_t wall = ecs_new(world);
-      ecs_add(world, wall, Position);
-      ecs_add(world, wall, CollisionBox);
-      Position p = {.x = x * tiled->tile_width, .y = y * tiled->tile_height};
+  tmx_object_group *wallgroup = layer->content.objgr;
+  tmx_object       *wall      = wallgroup->head;
+  while (wall) {
+    ecs_entity_t wall_id = ecs_new(world);
+    ecs_add(world, wall_id, Position);
+    ecs_add(world, wall_id, CollisionBox);
 
-      Position     *pos = ecs_get_mut(world, wall, Position);
-      CollisionBox *box = ecs_get_mut(world, wall, CollisionBox);
-      assert(pos);
-      assert(box);
-      pos->x      = p.x;
-      pos->y      = p.y;
-      box->x      = p.x;
-      box->y      = p.y;
-      box->width  = w;
-      box->height = h;
-    }
+    Position *pos = ecs_get_mut(world, wall_id, Position);
+    assert(pos);
+    pos->x = wall->x;
+    pos->y = wall->y;
+
+    CollisionBox *collision = ecs_get_mut(world, wall_id, CollisionBox);
+    assert(collision);
+    collision->x      = wall->x;
+    collision->y      = wall->y;
+    collision->width  = wall->width;
+    collision->height = wall->height;
+    wall              = wall->next;
   }
 }
 
@@ -60,11 +54,10 @@ int main(void) {
   window_init();
   ecs_world_t *world = world_init();
   player_init(world);
-  wall_init(world);
   AddWalls(world);
   while (!WindowShouldClose() && IsWindowReady()) {
     BeginDrawing();
-    ClearBackground(GRAY);
+    ClearBackground(BLACK);
     ecs_run(world, ecs_id(SystemCameraDrawBegin), 0, NULL);
     ecs_run(world, ecs_id(SystemDrawRoom), 0, NULL);
     ecs_run(world, ecs_id(SystemDrawRectSprite), 0, NULL);
@@ -135,29 +128,4 @@ void player_init(ecs_world_t *world) {
   camera->rotation = 0.0;
   camera->offset.x = 640 / 2;
   camera->offset.y = 480 / 2;
-}
-
-void wall_init(ecs_world_t *world) {
-  assert(world);
-  ecs_entity_t wall = ecs_new(world);
-  ecs_add(world, wall, Position);
-  ecs_add(world, wall, RectSprite);
-  ecs_add(world, wall, CollisionBox);
-
-  Position *pos = ecs_get_mut(world, wall, Position);
-  assert(pos);
-  pos->x = 192;
-  pos->y = 96 - 64;
-
-  RectSprite *rect = ecs_get_mut(world, wall, RectSprite);
-  assert(rect);
-  rect->color             = BLUE;
-  rect->dimensions.x      = pos->x;
-  rect->dimensions.y      = pos->y;
-  rect->dimensions.width  = 150;
-  rect->dimensions.height = 4;
-
-  CollisionBox *collision = ecs_get_mut(world, wall, CollisionBox);
-  assert(collision);
-  *collision = rect->dimensions;
 }

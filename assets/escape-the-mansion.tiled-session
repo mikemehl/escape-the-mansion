@@ -24,11 +24,11 @@
             "scaleInEditor": 5.5
         },
         "test-room.tmx": {
-            "scale": 11,
-            "selectedLayer": 2,
+            "scale": 4,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 131.8181818181818,
-                "y": 63.54545454545455
+                "x": 128.5,
+                "y": 64.75
             }
         },
         "test-room.tmx#HauntedHouseProps": {
