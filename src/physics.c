@@ -53,8 +53,10 @@ static void SystemResolveCollisions(ecs_iter_t *it) {
           printf("%f %f %f %f vs. %f %f %f %f\n", box[i].x, box[i].y,
                  box[i].width, box[i].height, other_box[i].x, other_box[i].y,
                  other_box[i].width, other_box[i].height);
-          pos[i].x -= vel[i].x;
-          pos[i].y -= vel[i].y;
+          printf("velocity: %f %f\n", vel[i].x, vel[i].y);
+          Rectangle collision  = GetCollisionRec(box[i], other_box[j]);
+          pos[i].x            -= (collision.x - pos[i].x) * vel[i].x;
+          pos[i].y            -= (collision.y - pos[i].y) * vel[i].y;
         }
       }
     }
