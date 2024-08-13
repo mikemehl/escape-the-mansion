@@ -1,7 +1,7 @@
 #include "player.h"
 #include "input.h"
 #include "physics.h"
-#include "render.h"
+#include "resources.h"
 
 ECS_TAG_DECLARE(PlayerTag);
 ECS_SYSTEM_DECLARE(SystemPlayerUpdate);
