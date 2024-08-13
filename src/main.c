@@ -129,9 +129,6 @@ void player_init(ecs_world_t *world) {
 
   AnimatedSprite *anim_sprite = ecs_get_mut(world, player, AnimatedSprite);
   assert(anim_sprite);
-  uint32_t        num_anims            = 0;
-  AnimatedSprite *anim_sprite_resource = GetPlayerAnimation(world, &num_anims);
-  assert(anim_sprite_resource);
-  assert(num_anims > 0);
-  *anim_sprite = anim_sprite_resource[0];
+  const ResourceTable *resource_table = ecs_singleton_get(world, ResourceTable);
+  *anim_sprite = resource_table->animated_sprites[ANIM_PLAYER_WALK_FR];
 }

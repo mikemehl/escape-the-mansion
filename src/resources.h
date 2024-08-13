@@ -20,14 +20,26 @@ typedef struct AnimatedSprite {
   bool      paused;
 } AnimatedSprite;
 
+typedef enum AnimatedSpriteIndex {
+  ANIM_PLAYER_WALK_FR = 0,
+  ANIM_PLAYER_WALK_FL,
+  ANIM_PLAYER_WALK_BR,
+  ANIM_PLAYER_WALK_BL,
+  NUM_ANIMATED_SPRITE_INDEXES
+} AnimatedSpriteIndex;
+
+typedef struct ResourceTable {
+  AnimatedSprite animated_sprites[NUM_ANIMATED_SPRITE_INDEXES];
+} ResourceTable;
+
 extern ECS_COMPONENT_DECLARE(Sprite);
 extern ECS_COMPONENT_DECLARE(Tiled);
 extern ECS_COMPONENT_DECLARE(AnimatedSprite);
+extern ECS_COMPONENT_DECLARE(ResourceTable);
 
-void            ResourcesImport(ecs_world_t *world);
-Sprite          LoadWalkSprite();
-Vector2         GetPlayerStartPoint(ecs_world_t *world);
-void            FreeResources();
-AnimatedSprite *GetPlayerAnimation(ecs_world_t *const, uint32_t *const);
+void    ResourcesImport(ecs_world_t *world);
+Sprite  LoadWalkSprite();
+Vector2 GetPlayerStartPoint(ecs_world_t *world);
+void    FreeResources();
 
 #endif

@@ -1,5 +1,6 @@
 #include "resources.h"
 #include "arena.h"
+#include "flecs/addons/flecs_c.h"
 #include "tmx.h"
 #include <raylib.h>
 #include <stdlib.h>
@@ -7,8 +8,13 @@
 ECS_COMPONENT_DECLARE(Sprite);
 ECS_COMPONENT_DECLARE(Tiled);
 ECS_COMPONENT_DECLARE(AnimatedSprite);
+ECS_COMPONENT_DECLARE(ResourceTable);
 
 static Arena ResourcesArena = {0};
+
+static struct {
+  AnimatedSprite animated_sprites[NUM_ANIMATED_SPRITE_INDEXES];
+} _resource_lut;
 
 Sprite LoadWalkSprite() {
   Texture2D walk = LoadTexture("./assets/characters/HumanTownsfolkWalk.png");
@@ -45,18 +51,17 @@ static void LoadTiled(ecs_world_t *world) {
   ecs_singleton_set_ptr(world, Tiled, test_room);
 }
 
-AnimatedSprite *GetPlayerAnimation(ecs_world_t *const world,
-                                   uint32_t *const    num_sprites) {
+static void LoadAnimations(ecs_world_t *const world) {
   static int call_count = 0;
   if (call_count == 0) {
     call_count++;
   } else {
     exit(666);
   }
-  AnimatedSprite *sprites = NULL;
-  *num_sprites            = 0;
-  const Tiled *tiled      = ecs_singleton_get(world, Tiled);
-  assert(tiled);
+  uint32_t       num_sprites = 0;
+  const Tiled   *tiled       = ecs_singleton_get(world, Tiled);
+  ResourceTable *resource_table =
+      ecs_get_mut(world, ecs_id(ResourceTable), ResourceTable);
   tmx_tileset_list *tslist = tiled->ts_head;
   while (tslist) {
     if (strcmp("character", tslist->tileset->name) != 0) {
@@ -68,23 +73,19 @@ AnimatedSprite *GetPlayerAnimation(ecs_world_t *const world,
       if (!tiles[i].animation) {
         continue;
       }
-      *num_sprites = *num_sprites + 1;
-      sprites      = arena_realloc(&ResourcesArena, sprites,
-                                   (*num_sprites - 1) * sizeof(AnimatedSprite),
-                                   *num_sprites * sizeof(AnimatedSprite));
-      assert(sprites);
+      num_sprites                = num_sprites + 1;
       tmx_anim_frame *anim       = tslist->tileset->tiles[i].animation;
       uint32_t        num_frames = tslist->tileset->tiles[i].animation_len;
       Sprite         *frames =
           arena_alloc(&ResourcesArena, num_frames * sizeof(Sprite));
       uint32_t *durations =
           arena_alloc(&ResourcesArena, num_frames * sizeof(uint32_t));
-      sprites[*num_sprites - 1].frames     = frames;
-      sprites[*num_sprites - 1].durations  = durations;
-      sprites[*num_sprites - 1].num_frames = num_frames;
-      sprites[*num_sprites - 1].curr_frame = 0;
-      sprites[*num_sprites - 1].frame_time = 0;
-      sprites[*num_sprites - 1].paused     = false;
+      resource_table->animated_sprites[num_sprites - 1].frames     = frames;
+      resource_table->animated_sprites[num_sprites - 1].durations  = durations;
+      resource_table->animated_sprites[num_sprites - 1].num_frames = num_frames;
+      resource_table->animated_sprites[num_sprites - 1].curr_frame = 0;
+      resource_table->animated_sprites[num_sprites - 1].frame_time = 0;
+      resource_table->animated_sprites[num_sprites - 1].paused     = false;
       for (int j = 0; j < num_frames; j++) {
         uint32_t              gid        = anim[j].tile_id + tslist->firstgid;
         tmx_tile const *const frame_tile = tiled->tiles[gid];
@@ -100,7 +101,6 @@ AnimatedSprite *GetPlayerAnimation(ecs_world_t *const world,
     }
     tslist = tslist->next;
   }
-  return sprites;
 }
 
 void FreeResources() {
@@ -137,5 +137,8 @@ void ResourcesImport(ecs_world_t *world) {
   ECS_COMPONENT_DEFINE(world, Sprite);
   ECS_COMPONENT_DEFINE(world, Tiled);
   ECS_COMPONENT_DEFINE(world, AnimatedSprite);
+  ECS_COMPONENT_DEFINE(world, ResourceTable);
+  ecs_singleton_add(world, ResourceTable);
   LoadTiled(world);
+  LoadAnimations(world);
 }
