@@ -18,7 +18,6 @@ static void window_init();
 static ecs_world_t *world_init();
 
 static void world_close(ecs_world_t *);
-static void player_init(ecs_world_t *);
 static void wall_init(ecs_world_t *);
 
 static void AddWalls(ecs_world_t *world) {
@@ -31,29 +30,31 @@ static void AddWalls(ecs_world_t *world) {
   tmx_object_group *wallgroup = layer->content.objgr;
   tmx_object       *wall      = wallgroup->head;
   while (wall) {
-    ecs_entity_t wall_id = ecs_new(world);
-    ecs_add(world, wall_id, Position);
-    ecs_add(world, wall_id, CollisionBox);
+    if (wall->width > 0 && wall->height > 0) {
+      ecs_entity_t wall_id = ecs_new(world);
+      ecs_add(world, wall_id, Position);
+      ecs_add(world, wall_id, CollisionBox);
 
-    Position *pos = ecs_get_mut(world, wall_id, Position);
-    assert(pos);
-    pos->x = wall->x;
-    pos->y = wall->y;
+      Position *pos = ecs_get_mut(world, wall_id, Position);
+      assert(pos);
+      pos->x = wall->x;
+      pos->y = wall->y;
 
-    CollisionBox *collision = ecs_get_mut(world, wall_id, CollisionBox);
-    assert(collision);
-    collision->x      = wall->x;
-    collision->y      = wall->y;
-    collision->width  = wall->width;
-    collision->height = wall->height;
-    wall              = wall->next;
+      CollisionBox *collision = ecs_get_mut(world, wall_id, CollisionBox);
+      assert(collision);
+      collision->x      = wall->x;
+      collision->y      = wall->y;
+      collision->width  = wall->width;
+      collision->height = wall->height;
+    }
+    wall = wall->next;
   }
 }
 
 int main(void) {
   window_init();
   ecs_world_t *world = world_init();
-  player_init(world);
+  AddPlayer(world);
   AddWalls(world);
   while (!WindowShouldClose() && IsWindowReady()) {
     BeginDrawing();
@@ -65,9 +66,11 @@ int main(void) {
     ecs_run(world, ecs_id(SystemDrawAnimatedSprite), 0, NULL);
     ecs_run(world, ecs_id(SystemCameraDrawEnd), 0, NULL);
     EndDrawing();
-    ecs_run(world, ecs_id(SystemPlayerUpdate), 0, NULL);
-    ecs_run(world, ecs_id(SystemCameraUpdate), 0, NULL);
     ecs_run(world, ecs_id(SystemGatherInput), 0, NULL);
+    ecs_run(world, ecs_id(SystemPlayerUpdate), 0, NULL);
+    ecs_run(world, ecs_id(SystemApplyVelocity), 0, NULL);
+    ecs_run(world, ecs_id(SystemResolveCollisions), 0, NULL);
+    ecs_run(world, ecs_id(SystemCameraUpdate), 0, NULL);
   }
   world_close(world);
   return 0;
@@ -91,44 +94,4 @@ ecs_world_t *world_init() {
 void world_close(ecs_world_t *world) {
   ecs_fini(world);
   FreeResources();
-}
-
-void player_init(ecs_world_t *world) {
-  assert(world);
-  ecs_entity_t player = ecs_new(world);
-  ecs_add(world, player, PlayerTag);
-  ecs_add(world, player, Position);
-  ecs_add(world, player, RectSprite);
-  ecs_add(world, player, CollisionBox);
-  ecs_add(world, player, CameraFollow);
-  ecs_add(world, player, AnimatedSprite);
-
-  Position *pos = ecs_get_mut(world, player, Position);
-  assert(pos);
-  *pos = GetPlayerStartPoint(world);
-
-  RectSprite *rect = ecs_get_mut(world, player, RectSprite);
-  assert(rect);
-  rect->color             = GREEN;
-  rect->dimensions.x      = pos->x;
-  rect->dimensions.y      = pos->y;
-  rect->dimensions.width  = 8;
-  rect->dimensions.height = 10;
-
-  CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
-  assert(collision);
-  *collision = (rect->dimensions);
-
-  CameraFollow *camera = ecs_get_mut(world, player, CameraFollow);
-  assert(camera);
-  camera->zoom     = 4.0f;
-  camera->target   = *pos;
-  camera->rotation = 0.0;
-  camera->offset.x = 640 / 2;
-  camera->offset.y = 480 / 2;
-
-  AnimatedSprite *anim_sprite = ecs_get_mut(world, player, AnimatedSprite);
-  assert(anim_sprite);
-  const ResourceTable *resource_table = ecs_singleton_get(world, ResourceTable);
-  *anim_sprite = resource_table->animated_sprites[ANIM_PLAYER_WALK_FR];
 }

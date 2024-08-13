@@ -8,4 +8,5 @@ extern ECS_SYSTEM_DECLARE(SystemPlayerAnimationUpdate);
 extern ECS_QUERY_DECLARE(PlayerCollisionQuery);
 
 void PlayerImport(ecs_world_t *world);
+void AddPlayer(ecs_world_t *world);
 #endif
