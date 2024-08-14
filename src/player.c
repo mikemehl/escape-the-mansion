@@ -120,9 +120,9 @@ void PlayerImport(ecs_world_t *world) {
   ECS_TAG_DEFINE(world, PlayerTag);
   ECS_QUERY_DEFINE(world, PlayerCollisionQuery, physics.Position,
                    physics.CollisionBox, !player.PlayerTag);
-  ECS_SYSTEM_DEFINE(world, SystemPlayerMove, 0, physics.Velocity,
+  ECS_SYSTEM_DEFINE(world, SystemPlayerMove, EcsPreUpdate, physics.Velocity,
                     player.PlayerTag, physics.Facing);
-  ECS_SYSTEM_DEFINE(world, SystemPlayerSpriteUpdate, 0, physics.Facing,
-                    resources.AnimatedSprite, physics.Velocity,
+  ECS_SYSTEM_DEFINE(world, SystemPlayerSpriteUpdate, EcsPreUpdate,
+                    physics.Facing, resources.AnimatedSprite, physics.Velocity,
                     player.PlayerTag);
 }

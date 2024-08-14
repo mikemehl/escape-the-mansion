@@ -56,23 +56,8 @@ int main(void) {
   ecs_world_t *world = world_init();
   AddPlayer(world);
   AddWalls(world);
-  while (!WindowShouldClose() && IsWindowReady()) {
-    BeginDrawing();
-    ClearBackground(BLACK);
-    ecs_run(world, ecs_id(SystemCameraDrawBegin), 0, NULL);
-    ecs_run(world, ecs_id(SystemDrawRoom), 0, NULL);
-    ecs_run(world, ecs_id(SystemDrawRectSprite), 0, NULL);
-    ecs_run(world, ecs_id(SystemDrawSprite), 0, NULL);
-    ecs_run(world, ecs_id(SystemDrawAnimatedSprite), 0, NULL);
-    ecs_run(world, ecs_id(SystemCameraDrawEnd), 0, NULL);
-    EndDrawing();
-    ecs_run(world, ecs_id(SystemGatherInput), 0, NULL);
-    ecs_run(world, ecs_id(SystemPlayerMove), 0, NULL);
-    ecs_run(world, ecs_id(SystemPlayerSpriteUpdate), 0, NULL);
-    ecs_run(world, ecs_id(SystemCollisionDetect), 0, NULL);
-    ecs_run(world, ecs_id(SystemApplyVelocity), 0, NULL);
-    ecs_run(world, ecs_id(SystemUpdateCollisionBoxPositions), 0, NULL);
-    ecs_run(world, ecs_id(SystemCameraUpdate), 0, NULL);
+  while (!WindowShouldClose()) {
+    ecs_progress(world, GetFrameTime());
   }
   world_close(world);
   return 0;
@@ -81,6 +66,7 @@ int main(void) {
 void window_init() {
   InitWindow(640, 480, "escape-the-mansion");
   SetTargetFPS(60);
+  SetExitKey(KEY_Q);
 }
 
 ecs_world_t *world_init() {
@@ -90,6 +76,7 @@ ecs_world_t *world_init() {
   ECS_IMPORT(world, Render);
   ECS_IMPORT(world, Input);
   ECS_IMPORT(world, Player);
+  ecs_set_target_fps(world, 60);
   return world;
 }
 

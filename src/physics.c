@@ -83,14 +83,25 @@ static void SystemUpdateCollisionBoxPositions(ecs_iter_t *it) {
 
 void PhysicsImport(ecs_world_t *world) {
   ECS_MODULE(world, Physics);
+
+  // phases
+  ecs_entity_t PhysicsCollision = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t PhysicsApply     = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t PhysicsCleanup   = ecs_new_w_id(world, EcsPhase);
+
+  ecs_add_pair(world, PhysicsCollision, EcsDependsOn, EcsOnUpdate);
+  ecs_add_pair(world, PhysicsApply, EcsDependsOn, PhysicsCollision);
+  ecs_add_pair(world, PhysicsCleanup, EcsDependsOn, PhysicsApply);
+
   ECS_COMPONENT_DEFINE(world, Position);
   ECS_COMPONENT_DEFINE(world, Velocity);
   ECS_COMPONENT_DEFINE(world, Facing);
   ECS_COMPONENT_DEFINE(world, CollisionBox);
-  ECS_SYSTEM_DEFINE(world, SystemApplyVelocity, 0, Position, Velocity);
-  ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, 0, Position, Velocity,
-                    CollisionBox);
-  ECS_SYSTEM_DEFINE(world, SystemUpdateCollisionBoxPositions, 0, Position,
-                    CollisionBox);
+  ECS_SYSTEM_DEFINE(world, SystemApplyVelocity, EcsPreStore, Position,
+                    Velocity);
+  ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, EcsPostUpdate, Position,
+                    Velocity, CollisionBox);
+  ECS_SYSTEM_DEFINE(world, SystemUpdateCollisionBoxPositions, EcsOnStore,
+                    Position, CollisionBox);
   ECS_QUERY_DEFINE(world, CollisionQuery, CollisionBox);
 }

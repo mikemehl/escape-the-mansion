@@ -1,15 +1,14 @@
 #include "input.h"
+#include "flecs.h"
+#include "raylib.h"
 
 ECS_COMPONENT_DECLARE(InputActions);
 ECS_SYSTEM_DECLARE(SystemGatherInput);
+ECS_SYSTEM_DECLARE(SystemCheckQuitGame);
 
 static void SystemGatherInput(ecs_iter_t *it) {
   InputActions *input = ecs_field(it, InputActions, 0);
   assert(input);
-  if (IsKeyDown(KEY_Q)) {
-    CloseWindow();
-    return;
-  }
   input->up    = IsKeyDown(KEY_W);
   input->down  = IsKeyDown(KEY_S);
   input->right = IsKeyDown(KEY_D);
@@ -22,6 +21,6 @@ void InputImport(ecs_world_t *world) {
   ecs_singleton_set(
       world, InputActions,
       {.up = false, .down = false, .left = false, .right = false});
-  ECS_SYSTEM_DEFINE(world, SystemGatherInput, EcsOnUpdate,
+  ECS_SYSTEM_DEFINE(world, SystemGatherInput, EcsPreUpdate,
                     input.InputActions($));
 }

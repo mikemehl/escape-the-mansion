@@ -1,4 +1,5 @@
 #include "render.h"
+#include "flecs.h"
 #include "physics.h"
 #include "resources.h"
 #include "tmx.h"
@@ -8,6 +9,8 @@ ECS_COMPONENT_DECLARE(RectSprite);
 ECS_COMPONENT_DECLARE(CameraFollow);
 ECS_SYSTEM_DECLARE(SystemDrawSprite);
 ECS_SYSTEM_DECLARE(SystemDrawRectSprite);
+ECS_SYSTEM_DECLARE(SystemDrawBegin);
+ECS_SYSTEM_DECLARE(SystemDrawEnd);
 ECS_SYSTEM_DECLARE(SystemCameraDrawBegin);
 ECS_SYSTEM_DECLARE(SystemCameraDrawEnd);
 ECS_SYSTEM_DECLARE(SystemCameraUpdate);
@@ -120,19 +123,50 @@ static void SystemDrawAnimatedSprite(ecs_iter_t *it) {
   }
 }
 
+static void SystemDrawBegin(ecs_iter_t *it) {
+  BeginDrawing();
+  ClearBackground(BLACK);
+}
+
+static void SystemDrawEnd(ecs_iter_t *it) {
+  EndDrawing();
+}
+
 void RenderImport(ecs_world_t *world) {
   ECS_MODULE(world, Render);
+
+  // phases
+  ecs_entity_t DrawBegin       = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t CameraDrawBegin = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t Draw            = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t CameraDraw      = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t CameraDrawRoom  = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t DrawEnd         = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t CameraDrawEnd   = ecs_new_w_id(world, EcsPhase);
+
+  ecs_add_pair(world, DrawBegin, EcsDependsOn, EcsPreUpdate);
+  ecs_add_pair(world, CameraDrawBegin, EcsDependsOn, DrawBegin);
+  ecs_add_pair(world, CameraDrawRoom, EcsDependsOn, CameraDrawBegin);
+  ecs_add_pair(world, CameraDraw, EcsDependsOn, CameraDrawRoom);
+  ecs_add_pair(world, CameraDrawEnd, EcsDependsOn, CameraDraw);
+  ecs_add_pair(world, Draw, EcsDependsOn, CameraDrawEnd);
+  ecs_add_pair(world, DrawEnd, EcsDependsOn, Draw);
+
   ECS_COMPONENT_DEFINE(world, RectSprite);
   ECS_COMPONENT_DEFINE(world, CameraFollow);
-  ECS_SYSTEM_DEFINE(world, SystemDrawSprite, EcsOnUpdate, physics.Position,
-                    resources.Sprite);
-  ECS_SYSTEM_DEFINE(world, SystemDrawRectSprite, 0, physics.Position,
+  ECS_SYSTEM_DEFINE(world, SystemDrawBegin, DrawBegin);
+  ECS_SYSTEM_DEFINE(world, SystemCameraDrawBegin, CameraDrawBegin,
+                    render.CameraFollow);
+  ECS_SYSTEM_DEFINE(world, SystemDrawRoom, CameraDrawRoom, resources.Tiled($));
+  ECS_SYSTEM_DEFINE(world, SystemDrawRectSprite, CameraDraw, physics.Position,
                     render.RectSprite);
-  ECS_SYSTEM_DEFINE(world, SystemCameraDrawBegin, 0, render.CameraFollow);
-  ECS_SYSTEM_DEFINE(world, SystemCameraDrawEnd, 0, render.CameraFollow);
-  ECS_SYSTEM_DEFINE(world, SystemCameraUpdate, 0, render.CameraFollow,
-                    physics.Position);
-  ECS_SYSTEM_DEFINE(world, SystemDrawAnimatedSprite, 0,
+  ECS_SYSTEM_DEFINE(world, SystemDrawSprite, CameraDraw, physics.Position,
+                    resources.Sprite);
+  ECS_SYSTEM_DEFINE(world, SystemDrawAnimatedSprite, CameraDraw,
                     resources.AnimatedSprite, physics.Position);
-  ECS_SYSTEM_DEFINE(world, SystemDrawRoom, 0, resources.Tiled($));
+  ECS_SYSTEM_DEFINE(world, SystemCameraDrawEnd, CameraDrawEnd,
+                    render.CameraFollow);
+  ECS_SYSTEM_DEFINE(world, SystemDrawEnd, DrawEnd);
+  ECS_SYSTEM_DEFINE(world, SystemCameraUpdate, DrawEnd, render.CameraFollow,
+                    physics.Position);
 }
