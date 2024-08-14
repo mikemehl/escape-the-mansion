@@ -68,8 +68,8 @@ int main(void) {
     EndDrawing();
     ecs_run(world, ecs_id(SystemGatherInput), 0, NULL);
     ecs_run(world, ecs_id(SystemPlayerUpdate), 0, NULL);
+    ecs_run(world, ecs_id(SystemCollisionDetect), 0, NULL);
     ecs_run(world, ecs_id(SystemApplyVelocity), 0, NULL);
-    ecs_run(world, ecs_id(SystemResolveCollisions), 0, NULL);
     ecs_run(world, ecs_id(SystemCameraUpdate), 0, NULL);
   }
   world_close(world);

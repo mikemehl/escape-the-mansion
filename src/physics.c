@@ -1,13 +1,14 @@
 #include "physics.h"
 #include "flecs.h"
 #include "flecs/addons/flecs_c.h"
+#include "raymath.h"
 #include <raylib.h>
 
 ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Velocity);
 ECS_COMPONENT_DECLARE(CollisionBox);
 ECS_SYSTEM_DECLARE(SystemApplyVelocity);
-ECS_SYSTEM_DECLARE(SystemResolveCollisions);
+ECS_SYSTEM_DECLARE(SystemCollisionDetect);
 ECS_QUERY_DECLARE(CollisionQuery);
 
 static void SystemApplyVelocity(ecs_iter_t *it) {
@@ -25,7 +26,7 @@ static void SystemApplyVelocity(ecs_iter_t *it) {
   }
 }
 
-static void SystemResolveCollisions(ecs_iter_t *it) {
+static void SystemCollisionDetect(ecs_iter_t *it) {
   Position     *pos = ecs_field(it, Position, 0);
   Velocity     *vel = ecs_field(it, Velocity, 1);
   CollisionBox *box = ecs_field(it, CollisionBox, 2);
@@ -49,19 +50,20 @@ static void SystemResolveCollisions(ecs_iter_t *it) {
         if (other_it.entities[j] == it->entities[i]) {
           continue;
         }
+        box[i].x += vel[i].x;
+        box[i].y += vel[i].y;
         if (CheckCollisionRecs(box[i], other_box[j])) {
-          printf("%f %f %f %f vs. %f %f %f %f\n", box[i].x, box[i].y,
-                 box[i].width, box[i].height, other_box[i].x, other_box[i].y,
-                 other_box[i].width, other_box[i].height);
-          printf("velocity: %f %f\n", vel[i].x, vel[i].y);
-          Rectangle collision  = GetCollisionRec(box[i], other_box[j]);
-          pos[i].x            -= (collision.x - pos[i].x) * vel[i].x;
-          pos[i].y            -= (collision.y - pos[i].y) * vel[i].y;
+          vel[i].x *= -1;
+          box[i].x += vel[i].x;
+          if (CheckCollisionRecs(box[i], other_box[j])) {
+            vel[i].y *= -1;
+            box[i].y += vel[i].y;
+          }
         }
+        box[i].x = pos[i].x;
+        box[i].y = pos[i].y;
       }
     }
-    box[i].x = pos[i].x;
-    box[i].y = pos[i].y;
     ecs_query_fini(other_query);
   }
 }
@@ -72,7 +74,7 @@ void PhysicsImport(ecs_world_t *world) {
   ECS_COMPONENT_DEFINE(world, Velocity);
   ECS_COMPONENT_DEFINE(world, CollisionBox);
   ECS_SYSTEM_DEFINE(world, SystemApplyVelocity, 0, Position, Velocity);
-  ECS_SYSTEM_DEFINE(world, SystemResolveCollisions, 0, Position, Velocity,
+  ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, 0, Position, Velocity,
                     CollisionBox);
   ECS_QUERY_DEFINE(world, CollisionQuery, CollisionBox);
 }

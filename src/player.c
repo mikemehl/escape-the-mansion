@@ -1,6 +1,7 @@
 #include "player.h"
 #include "input.h"
 #include "physics.h"
+#include "raymath.h"
 #include "render.h"
 #include "resources.h"
 
@@ -27,6 +28,8 @@ static void SystemPlayerUpdate(ecs_iter_t *it) {
   } else if (input->left) {
     vel->x -= 1;
   }
+
+  *vel = Vector2Normalize(*vel);
 }
 
 void AddPlayer(ecs_world_t *world) {
