@@ -1,14 +1,15 @@
 #include "physics.h"
 #include "flecs.h"
 #include "flecs/addons/flecs_c.h"
-#include "raymath.h"
 #include <raylib.h>
 
 ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Velocity);
+ECS_COMPONENT_DECLARE(Facing);
 ECS_COMPONENT_DECLARE(CollisionBox);
 ECS_SYSTEM_DECLARE(SystemApplyVelocity);
 ECS_SYSTEM_DECLARE(SystemCollisionDetect);
+ECS_SYSTEM_DECLARE(SystemUpdateCollisionBoxPositions);
 ECS_QUERY_DECLARE(CollisionQuery);
 
 static void SystemApplyVelocity(ecs_iter_t *it) {
@@ -68,13 +69,28 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
   }
 }
 
+static void SystemUpdateCollisionBoxPositions(ecs_iter_t *it) {
+  Position     *pos = ecs_field(it, Position, 0);
+  CollisionBox *box = ecs_field(it, CollisionBox, 1);
+  assert(pos);
+  assert(box);
+
+  for (int i = 0; i < it->count; i++) {
+    box[i].x = pos[i].x;
+    box[i].y = pos[i].y;
+  }
+}
+
 void PhysicsImport(ecs_world_t *world) {
   ECS_MODULE(world, Physics);
   ECS_COMPONENT_DEFINE(world, Position);
   ECS_COMPONENT_DEFINE(world, Velocity);
+  ECS_COMPONENT_DEFINE(world, Facing);
   ECS_COMPONENT_DEFINE(world, CollisionBox);
   ECS_SYSTEM_DEFINE(world, SystemApplyVelocity, 0, Position, Velocity);
   ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, 0, Position, Velocity,
+                    CollisionBox);
+  ECS_SYSTEM_DEFINE(world, SystemUpdateCollisionBoxPositions, 0, Position,
                     CollisionBox);
   ECS_QUERY_DEFINE(world, CollisionQuery, CollisionBox);
 }

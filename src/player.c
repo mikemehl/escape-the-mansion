@@ -1,4 +1,5 @@
 #include "player.h"
+#include "flecs/addons/flecs_c.h"
 #include "input.h"
 #include "physics.h"
 #include "raymath.h"
@@ -6,30 +7,57 @@
 #include "resources.h"
 
 ECS_TAG_DECLARE(PlayerTag);
-ECS_SYSTEM_DECLARE(SystemPlayerUpdate);
+ECS_SYSTEM_DECLARE(SystemPlayerMove);
+ECS_SYSTEM_DECLARE(SystemPlayerSpriteUpdate);
 ECS_QUERY_DECLARE(PlayerCollisionQuery);
 
-static void SystemPlayerUpdate(ecs_iter_t *it) {
-  Velocity *vel = ecs_field(it, Velocity, 0);
+static void SystemPlayerMove(ecs_iter_t *it) {
+  Velocity           *vel    = ecs_field(it, Velocity, 0);
+  Facing             *facing = ecs_field(it, Facing, 2);
+  const InputActions *input  = ecs_singleton_get(it->world, InputActions);
   assert(vel);
-  const InputActions *input = ecs_singleton_get(it->world, InputActions);
+  assert(facing);
   assert(input);
 
-  vel->x = 0;
-  vel->y = 0;
+  vel->x    = input->right ? 1 : (input->left ? -1 : 0);
+  vel->y    = input->down ? 1 : (input->up ? -1 : 0);
+  facing->x = input->right ? 1 : (input->left ? -1 : facing->x);
+  facing->y = input->down ? 1 : (input->up ? -1 : facing->y);
+  *vel      = Vector2Normalize(*vel);
+}
 
-  if (input->up) {
-    vel->y -= 1;
-  } else if (input->down) {
-    vel->y += 1;
-  }
-  if (input->right) {
-    vel->x += 1;
-  } else if (input->left) {
-    vel->x -= 1;
-  }
+static void SystemPlayerSpriteUpdate(ecs_iter_t *it) {
+  Facing              *facing    = ecs_field(it, Facing, 0);
+  AnimatedSprite      *sprite    = ecs_field(it, AnimatedSprite, 1);
+  Velocity            *vel       = ecs_field(it, Velocity, 2);
+  const ResourceTable *resources = ecs_singleton_get(it->world, ResourceTable);
+  assert(facing);
+  assert(sprite);
+  assert(vel);
+  assert(resources);
 
-  *vel = Vector2Normalize(*vel);
+  if (vel->x == 0 && vel->y == 0) {
+    sprite->paused     = true;
+    sprite->curr_frame = 0;
+    sprite->frame_time = 0;
+  } else {
+    sprite->paused = false;
+    AnimatedSpriteIndex idx =
+        facing->x > 0 && facing->y > 0   ? ANIM_PLAYER_WALK_FR
+        : facing->x < 0 && facing->y > 0 ? ANIM_PLAYER_WALK_FL
+        : facing->x > 0 && facing->y < 0 ? ANIM_PLAYER_WALK_BR
+                                         : ANIM_PLAYER_WALK_BL;
+    AnimatedSprite new_sprite = resources->animated_sprites[idx];
+    sprite->frames            = new_sprite.frames;
+    sprite->num_frames        = new_sprite.num_frames;
+    if (sprite->curr_frame > sprite->num_frames) {
+      sprite->curr_frame = 0;
+    }
+    sprite->durations = new_sprite.durations;
+    if (sprite->frame_time > sprite->durations[sprite->curr_frame]) {
+      sprite->frame_time = 0;
+    }
+  }
 }
 
 void AddPlayer(ecs_world_t *world) {
@@ -38,6 +66,7 @@ void AddPlayer(ecs_world_t *world) {
   ecs_add(world, player, PlayerTag);
   ecs_add(world, player, Position);
   ecs_add(world, player, Velocity);
+  ecs_add(world, player, Facing);
   ecs_add(world, player, RectSprite);
   ecs_add(world, player, CollisionBox);
   ecs_add(world, player, CameraFollow);
@@ -51,6 +80,11 @@ void AddPlayer(ecs_world_t *world) {
   assert(vel);
   vel->x = 0;
   vel->y = 0;
+
+  Facing *facing = ecs_get_mut(world, player, Facing);
+  assert(facing);
+  facing->x = 1;
+  facing->y = -1;
 
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
@@ -86,6 +120,9 @@ void PlayerImport(ecs_world_t *world) {
   ECS_TAG_DEFINE(world, PlayerTag);
   ECS_QUERY_DEFINE(world, PlayerCollisionQuery, physics.Position,
                    physics.CollisionBox, !player.PlayerTag);
-  ECS_SYSTEM_DEFINE(world, SystemPlayerUpdate, 0, physics.Velocity,
+  ECS_SYSTEM_DEFINE(world, SystemPlayerMove, 0, physics.Velocity,
+                    player.PlayerTag, physics.Facing);
+  ECS_SYSTEM_DEFINE(world, SystemPlayerSpriteUpdate, 0, physics.Facing,
+                    resources.AnimatedSprite, physics.Velocity,
                     player.PlayerTag);
 }
