@@ -1,6 +1,6 @@
 #ifndef __IMAGE__H__
 #define __IMAGE__H__
-#include "flecs.h"
+#include <flecs.h>
 #include <raylib.h>
 #include <tmx.h>
 

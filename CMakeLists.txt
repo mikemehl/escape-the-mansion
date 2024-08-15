@@ -44,17 +44,23 @@ add_executable(
   ./src/player.c
   ./src/arena.c)
 
-target_include_directories(
-  escape-the-mansion PUBLIC ./src "${CMAKE_CURRENT_LIST_DIR}/include"
-                            ${arena_SOURCE_DIR})
-target_link_libraries(escape-the-mansion PUBLIC flecs_static raylib tmx)
-set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_STANDARD 23)
-set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_STANDARD_REQUIRED
-                                                    True)
-set_target_properties(
-  escape-the-mansion PROPERTIES CMAKE_C_FLAGS
-                                "${CMAKE_C_FLAGS} -g -Wall -Wextra")
+target_include_directories(escape-the-mansion
+  PUBLIC
+  ./src
+  "${CMAKE_CURRENT_LIST_DIR}/include"
+  ${arena_SOURCE_DIR})
 
-set_target_properties(escape-the-mansion PROPERTIES C_CPPCHECK "cppcheck")
-set_target_properties(escape-the-mansion PROPERTIES C_CLANG_TIDY
-                                                    "clang-tidy;--use-color")
+target_link_libraries(escape-the-mansion
+  PUBLIC
+  flecs_static
+  raylib
+  tmx)
+
+set_target_properties(escape-the-mansion
+  PROPERTIES
+  CMAKE_C_STANDARD 23
+  CMAKE_C_STANDARD_REQUIRED True
+  CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra"
+  C_CPPCHECK "cppcheck"
+  C_CLANG_TIDY "clang-tidy;--use-color"
+)

@@ -1,6 +1,6 @@
 #ifndef __RENDER__H__
 #define __RENDER__H__
-#include "flecs.h"
+#include <flecs.h>
 #include <raylib.h>
 
 typedef struct RectSprite {

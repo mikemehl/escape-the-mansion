@@ -1,6 +1,6 @@
 #ifndef __PHYSICS__H__
 #define __PHYSICS__H__
-#include "flecs.h"
+#include <flecs.h>
 #include <raylib.h>
 
 typedef Vector2 Position;

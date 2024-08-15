@@ -1,5 +1,5 @@
 #include "physics.h"
-#include "flecs.h"
+#include <flecs.h>
 #include "flecs/addons/flecs_c.h"
 #include <raylib.h>
 

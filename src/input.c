@@ -1,5 +1,5 @@
 #include "input.h"
-#include "flecs.h"
+#include <flecs.h>
 #include "raylib.h"
 
 ECS_COMPONENT_DECLARE(InputActions);

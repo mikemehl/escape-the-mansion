@@ -1,6 +1,6 @@
 #ifndef __INPUT__H__
 #define __INPUT__H__
-#include "flecs.h"
+#include <flecs.h>
 #include <raylib.h>
 
 typedef struct InputActions {
