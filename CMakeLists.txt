@@ -43,11 +43,12 @@ add_executable(
   ./src/resources.c
   ./src/player.c
   ./src/arena.c)
+
 target_include_directories(
   escape-the-mansion PUBLIC ./src "${CMAKE_CURRENT_LIST_DIR}/include"
                             ${arena_SOURCE_DIR})
 target_link_libraries(escape-the-mansion PUBLIC flecs_static raylib tmx)
-set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_STANDARD 99)
+set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_STANDARD 23)
 set_target_properties(escape-the-mansion PROPERTIES CMAKE_C_STANDARD_REQUIRED
                                                     True)
 set_target_properties(

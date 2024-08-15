@@ -11,11 +11,11 @@
 
 #define TILED_WALL_LAYER 5
 
-static void window_init();
+static void RaylibSetup();
 
-static ecs_world_t *world_init();
+static ecs_world_t *EcsSetup();
 
-static void world_close(ecs_world_t *);
+static void EcsTeardown(ecs_world_t *);
 static void wall_init(ecs_world_t *);
 
 static void AddWalls(ecs_world_t *world) {
@@ -50,24 +50,24 @@ static void AddWalls(ecs_world_t *world) {
 }
 
 int main(void) {
-  window_init();
-  ecs_world_t *world = world_init();
+  RaylibSetup();
+  ecs_world_t *world = EcsSetup();
   AddPlayer(world);
   AddWalls(world);
   while (!WindowShouldClose()) {
     ecs_progress(world, GetFrameTime());
   }
-  world_close(world);
+  EcsTeardown(world);
   return 0;
 }
 
-void window_init() {
+void RaylibSetup() {
   InitWindow(640, 480, "escape-the-mansion");
   SetTargetFPS(60);
   SetExitKey(KEY_Q);
 }
 
-ecs_world_t *world_init() {
+ecs_world_t *EcsSetup() {
   ecs_world_t *world = ecs_init();
   ECS_IMPORT(world, Resources);
   ECS_IMPORT(world, Physics);
@@ -80,7 +80,7 @@ ecs_world_t *world_init() {
   return world;
 }
 
-void world_close(ecs_world_t *world) {
+void EcsTeardown(ecs_world_t *world) {
   ecs_fini(world);
   FreeResources();
 }
