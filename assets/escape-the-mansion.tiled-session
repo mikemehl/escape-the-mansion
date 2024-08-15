@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "test-room.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "."
     ],
@@ -29,7 +29,7 @@
         },
         "test-room.tmx": {
             "scale": 4,
-            "selectedLayer": 3,
+            "selectedLayer": 1,
             "viewCenter": {
                 "x": 120,
                 "y": 80
@@ -45,7 +45,8 @@
         },
         "test-room.tmx#haunted-house": {
             "dynamicWrapping": false,
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 4
         }
     },
     "last.exportedFilePath": "/home/mike/code/escape-the-mansion/assets",
