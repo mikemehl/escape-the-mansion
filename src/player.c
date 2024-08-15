@@ -64,55 +64,24 @@ void AddPlayer(ecs_world_t *world) {
   assert(world);
   ecs_entity_t player = ecs_new(world);
   ecs_add(world, player, PlayerTag);
-  ecs_add(world, player, Position);
-  ecs_add(world, player, Velocity);
-  ecs_add(world, player, Facing);
-  ecs_add(world, player, RectSprite);
-  ecs_add(world, player, CollisionBox);
-  ecs_add(world, player, CameraFollow);
-  ecs_add(world, player, AnimatedSprite);
-
-  Position *pos = ecs_get_mut(world, player, Position);
-  assert(pos);
-  *pos = GetPlayerStartPoint(world);
-
-  Velocity *vel = ecs_get_mut(world, player, Velocity);
-  assert(vel);
-  vel->x = 0;
-  vel->y = 0;
-
-  Facing *facing = ecs_get_mut(world, player, Facing);
-  assert(facing);
-  facing->x = 1;
-  facing->y = -1;
-
-  RectSprite *rect = ecs_get_mut(world, player, RectSprite);
-  assert(rect);
-  rect->color = GREEN;
-  rect->dimensions.x = pos->x;
-  rect->dimensions.y = pos->y;
-  rect->dimensions.width = 8;
-  rect->dimensions.height = 10;
-
-  CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
-  assert(collision);
-  collision->x = pos->x;
-  collision->y = pos->y;
-  collision->width = 8;
-  collision->height = 10;
-
-  CameraFollow *camera = ecs_get_mut(world, player, CameraFollow);
-  assert(camera);
-  camera->zoom = 4.0f;
-  camera->target = *pos;
-  camera->rotation = 0.0;
-  camera->offset.x = 640 / 2;
-  camera->offset.y = 480 / 2;
-
-  AnimatedSprite *anim_sprite = ecs_get_mut(world, player, AnimatedSprite);
-  assert(anim_sprite);
+  Position pos = GetPlayerStartPoint(world);
+  ecs_set(world, player, Position, {.x = pos.x, .y = pos.y});
+  ecs_set(world, player, Velocity, {0});
+  ecs_set(world, player, Facing, {.x = 1, .y = -1});
+  ecs_set(world, player, RectSprite,
+          {.color = GREEN,
+           .dimensions = {.x = pos.x, .y = pos.y, .width = 8, .height = 10}});
+  ecs_set(world, player, CollisionBox,
+          {.x = pos.x, .y = pos.y, .width = 8, .height = 8});
+  ecs_set(world, player, CameraFollow,
+          {.zoom = 4.0f,
+           .target = pos,
+           .rotation = 0,
+           .offset = {.x = 640 / 2, .y = 480 / 2}});
   const ResourceTable *resource_table = ecs_singleton_get(world, ResourceTable);
-  *anim_sprite = resource_table->animated_sprites[ANIM_PLAYER_WALK_FR];
+  ecs_set_ptr(
+      world, player, AnimatedSprite,
+      (const void *)&resource_table->animated_sprites[ANIM_PLAYER_WALK_FR]);
 }
 
 void PlayerImport(ecs_world_t *world) {

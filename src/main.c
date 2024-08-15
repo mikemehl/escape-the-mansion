@@ -30,20 +30,12 @@ static void AddWalls(ecs_world_t *world) {
   while (wall) {
     if (wall->width > 0 && wall->height > 0) {
       ecs_entity_t wall_id = ecs_new(world);
-      ecs_add(world, wall_id, Position);
-      ecs_add(world, wall_id, CollisionBox);
-
-      Position *pos = ecs_get_mut(world, wall_id, Position);
-      assert(pos);
-      pos->x = wall->x;
-      pos->y = wall->y;
-
-      CollisionBox *collision = ecs_get_mut(world, wall_id, CollisionBox);
-      assert(collision);
-      collision->x = wall->x;
-      collision->y = wall->y;
-      collision->width = wall->width;
-      collision->height = wall->height;
+      ecs_set(world, wall_id, Position, {.x = wall->x, .y = wall->y});
+      ecs_set(world, wall_id, CollisionBox,
+              {.x = wall->x,
+               .y = wall->y,
+               .width = wall->width,
+               .height = wall->height});
     }
     wall = wall->next;
   }
