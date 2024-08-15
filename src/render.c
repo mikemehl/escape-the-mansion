@@ -1,8 +1,8 @@
 #include "render.h"
-#include <flecs.h>
 #include "physics.h"
 #include "resources.h"
 #include "tmx.h"
+#include <flecs.h>
 #include <raylib.h>
 
 ECS_COMPONENT_DECLARE(RectSprite);

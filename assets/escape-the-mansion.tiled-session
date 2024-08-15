@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "test-room.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -29,7 +29,7 @@
         },
         "test-room.tmx": {
             "scale": 4,
-            "selectedLayer": 1,
+            "selectedLayer": 3,
             "viewCenter": {
                 "x": 120,
                 "y": 80
