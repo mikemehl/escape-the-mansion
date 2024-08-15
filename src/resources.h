@@ -12,12 +12,13 @@ typedef struct Sprite {
 typedef tmx_map Tiled;
 
 typedef struct AnimatedSprite {
-  Sprite   *frames;
+  Texture2D texture;
+  Rectangle *frames;
   uint32_t *durations;
-  uint32_t  num_frames;
-  uint32_t  curr_frame;
-  uint32_t  frame_time;
-  bool      paused;
+  uint32_t num_frames;
+  uint32_t curr_frame;
+  uint32_t frame_time;
+  bool paused;
 } AnimatedSprite;
 
 typedef enum AnimatedSpriteIndex {
@@ -37,9 +38,9 @@ extern ECS_COMPONENT_DECLARE(Tiled);
 extern ECS_COMPONENT_DECLARE(AnimatedSprite);
 extern ECS_COMPONENT_DECLARE(ResourceTable);
 
-void    ResourcesImport(ecs_world_t *world);
-Sprite  LoadWalkSprite();
+void ResourcesImport(ecs_world_t *world);
+Sprite LoadWalkSprite();
 Vector2 GetPlayerStartPoint(ecs_world_t *world);
-void    FreeResources();
+void FreeResources();
 
 #endif

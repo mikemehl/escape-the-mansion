@@ -22,14 +22,14 @@ static void SystemApplyVelocity(ecs_iter_t *it) {
     Position new_pos;
     new_pos.x = pos[i].x + vel[i].x;
     new_pos.y = pos[i].y + vel[i].y;
-    pos[i].x  = new_pos.x;
-    pos[i].y  = new_pos.y;
+    pos[i].x = new_pos.x;
+    pos[i].y = new_pos.y;
   }
 }
 
 static void SystemCollisionDetect(ecs_iter_t *it) {
-  Position     *pos = ecs_field(it, Position, 0);
-  Velocity     *vel = ecs_field(it, Velocity, 1);
+  Position *pos = ecs_field(it, Position, 0);
+  Velocity *vel = ecs_field(it, Velocity, 1);
   CollisionBox *box = ecs_field(it, CollisionBox, 2);
   assert(pos);
   assert(vel);
@@ -39,11 +39,11 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
     ecs_query_desc_t other_query_desc = {
         .terms =
             {
-                    {.id = ecs_id(CollisionBox)},
-                    },
+                {.id = ecs_id(CollisionBox)},
+            },
     };
     ecs_query_t *other_query = ecs_query_init(it->world, &other_query_desc);
-    ecs_iter_t   other_it    = ecs_query_iter(it->world, other_query);
+    ecs_iter_t other_it = ecs_query_iter(it->world, other_query);
     while (ecs_query_next(&other_it)) {
       CollisionBox *other_box = ecs_field(&other_it, CollisionBox, 0);
       assert(other_box);
@@ -70,7 +70,7 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
 }
 
 static void SystemUpdateCollisionBoxPositions(ecs_iter_t *it) {
-  Position     *pos = ecs_field(it, Position, 0);
+  Position *pos = ecs_field(it, Position, 0);
   CollisionBox *box = ecs_field(it, CollisionBox, 1);
   assert(pos);
   assert(box);
@@ -86,8 +86,8 @@ void PhysicsImport(ecs_world_t *world) {
 
   // phases
   ecs_entity_t PhysicsCollision = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t PhysicsApply     = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t PhysicsCleanup   = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t PhysicsApply = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t PhysicsCleanup = ecs_new_w_id(world, EcsPhase);
 
   ecs_add_pair(world, PhysicsCollision, EcsDependsOn, EcsOnUpdate);
   ecs_add_pair(world, PhysicsApply, EcsDependsOn, PhysicsCollision);

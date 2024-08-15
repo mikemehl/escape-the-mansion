@@ -1,8 +1,6 @@
 #include "flecs.h"
 #include <assert.h>
 #include <raylib.h>
-#include <stdio.h>
-#include <time.h>
 
 #include "input.h"
 #include "physics.h"
@@ -22,13 +20,13 @@ static void wall_init(ecs_world_t *);
 
 static void AddWalls(ecs_world_t *world) {
   const Tiled *tiled = ecs_singleton_get(world, Tiled);
-  tmx_layer   *layer = tiled->ly_head;
+  tmx_layer *layer = tiled->ly_head;
   while (layer && layer->id != TILED_WALL_LAYER) {
     layer = layer->next;
   }
   assert(layer);
   tmx_object_group *wallgroup = layer->content.objgr;
-  tmx_object       *wall      = wallgroup->head;
+  tmx_object *wall = wallgroup->head;
   while (wall) {
     if (wall->width > 0 && wall->height > 0) {
       ecs_entity_t wall_id = ecs_new(world);
@@ -42,9 +40,9 @@ static void AddWalls(ecs_world_t *world) {
 
       CollisionBox *collision = ecs_get_mut(world, wall_id, CollisionBox);
       assert(collision);
-      collision->x      = wall->x;
-      collision->y      = wall->y;
-      collision->width  = wall->width;
+      collision->x = wall->x;
+      collision->y = wall->y;
+      collision->width = wall->width;
       collision->height = wall->height;
     }
     wall = wall->next;

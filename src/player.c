@@ -12,24 +12,24 @@ ECS_SYSTEM_DECLARE(SystemPlayerSpriteUpdate);
 ECS_QUERY_DECLARE(PlayerCollisionQuery);
 
 static void SystemPlayerMove(ecs_iter_t *it) {
-  Velocity           *vel    = ecs_field(it, Velocity, 0);
-  Facing             *facing = ecs_field(it, Facing, 2);
-  const InputActions *input  = ecs_singleton_get(it->world, InputActions);
+  Velocity *vel = ecs_field(it, Velocity, 0);
+  Facing *facing = ecs_field(it, Facing, 2);
+  const InputActions *input = ecs_singleton_get(it->world, InputActions);
   assert(vel);
   assert(facing);
   assert(input);
 
-  vel->x    = input->right ? 1 : (input->left ? -1 : 0);
-  vel->y    = input->down ? 1 : (input->up ? -1 : 0);
+  vel->x = input->right ? 1 : (input->left ? -1 : 0);
+  vel->y = input->down ? 1 : (input->up ? -1 : 0);
   facing->x = input->right ? 1 : (input->left ? -1 : facing->x);
   facing->y = input->down ? 1 : (input->up ? -1 : facing->y);
-  *vel      = Vector2Normalize(*vel);
+  *vel = Vector2Normalize(*vel);
 }
 
 static void SystemPlayerSpriteUpdate(ecs_iter_t *it) {
-  Facing              *facing    = ecs_field(it, Facing, 0);
-  AnimatedSprite      *sprite    = ecs_field(it, AnimatedSprite, 1);
-  Velocity            *vel       = ecs_field(it, Velocity, 2);
+  Facing *facing = ecs_field(it, Facing, 0);
+  AnimatedSprite *sprite = ecs_field(it, AnimatedSprite, 1);
+  Velocity *vel = ecs_field(it, Velocity, 2);
   const ResourceTable *resources = ecs_singleton_get(it->world, ResourceTable);
   assert(facing);
   assert(sprite);
@@ -37,7 +37,7 @@ static void SystemPlayerSpriteUpdate(ecs_iter_t *it) {
   assert(resources);
 
   if (vel->x == 0 && vel->y == 0) {
-    sprite->paused     = true;
+    sprite->paused = true;
     sprite->curr_frame = 0;
     sprite->frame_time = 0;
   } else {
@@ -48,8 +48,8 @@ static void SystemPlayerSpriteUpdate(ecs_iter_t *it) {
         : facing->x > 0 && facing->y < 0 ? ANIM_PLAYER_WALK_BR
                                          : ANIM_PLAYER_WALK_BL;
     AnimatedSprite new_sprite = resources->animated_sprites[idx];
-    sprite->frames            = new_sprite.frames;
-    sprite->num_frames        = new_sprite.num_frames;
+    sprite->frames = new_sprite.frames;
+    sprite->num_frames = new_sprite.num_frames;
     if (sprite->curr_frame > sprite->num_frames) {
       sprite->curr_frame = 0;
     }
@@ -88,23 +88,23 @@ void AddPlayer(ecs_world_t *world) {
 
   RectSprite *rect = ecs_get_mut(world, player, RectSprite);
   assert(rect);
-  rect->color             = GREEN;
-  rect->dimensions.x      = pos->x;
-  rect->dimensions.y      = pos->y;
-  rect->dimensions.width  = 8;
+  rect->color = GREEN;
+  rect->dimensions.x = pos->x;
+  rect->dimensions.y = pos->y;
+  rect->dimensions.width = 8;
   rect->dimensions.height = 10;
 
   CollisionBox *collision = ecs_get_mut(world, player, CollisionBox);
   assert(collision);
-  collision->x      = pos->x;
-  collision->y      = pos->y;
-  collision->width  = 8;
+  collision->x = pos->x;
+  collision->y = pos->y;
+  collision->width = 8;
   collision->height = 10;
 
   CameraFollow *camera = ecs_get_mut(world, player, CameraFollow);
   assert(camera);
-  camera->zoom     = 4.0f;
-  camera->target   = *pos;
+  camera->zoom = 4.0f;
+  camera->target = *pos;
   camera->rotation = 0.0;
   camera->offset.x = 640 / 2;
   camera->offset.y = 480 / 2;

@@ -18,8 +18,8 @@ ECS_SYSTEM_DECLARE(SystemDrawRoom);
 ECS_SYSTEM_DECLARE(SystemDrawAnimatedSprite);
 
 static void SystemDrawSprite(ecs_iter_t *it) {
-  Position *p      = ecs_field(it, Position, 0);
-  Sprite   *sprite = ecs_field(it, Sprite, 1);
+  Position *p = ecs_field(it, Position, 0);
+  Sprite *sprite = ecs_field(it, Sprite, 1);
 
   for (int i = 0; i < it->count; i++) {
     DrawTextureRec(sprite->texture, sprite->area, *p, WHITE);
@@ -27,7 +27,7 @@ static void SystemDrawSprite(ecs_iter_t *it) {
 }
 
 static void SystemDrawRectSprite(ecs_iter_t *it) {
-  Position   *p = ecs_field(it, Position, 0);
+  Position *p = ecs_field(it, Position, 0);
   RectSprite *r = ecs_field(it, RectSprite, 1);
   assert(p);
   assert(r);
@@ -54,7 +54,7 @@ static void SystemCameraDrawEnd(ecs_iter_t *it) {
 
 static void SystemCameraUpdate(ecs_iter_t *it) {
   CameraFollow *camera = ecs_field(it, CameraFollow, 0);
-  Position     *pos    = ecs_field(it, Position, 1);
+  Position *pos = ecs_field(it, Position, 1);
 
   for (int i = 0; i < it->count; i++) {
     camera[i].target = pos[i];
@@ -68,9 +68,9 @@ static void DrawTile(tmx_tile *tile, Vector2 pos) {
   Texture2D *texture = tileset->image->resource_image;
   assert(texture);
 
-  Rectangle tile_rect = {.x      = tile->ul_x,
-                         .y      = tile->ul_y,
-                         .width  = tile->width,
+  Rectangle tile_rect = {.x = tile->ul_x,
+                         .y = tile->ul_y,
+                         .width = tile->width,
                          .height = tile->height};
 
   DrawTextureRec(*texture, tile_rect, pos, WHITE);
@@ -106,12 +106,17 @@ static void SystemDrawRoom(ecs_iter_t *it) {
 
 static void SystemDrawAnimatedSprite(ecs_iter_t *it) {
   AnimatedSprite *const sprite = ecs_field(it, AnimatedSprite, 0);
-  Position const *const pos    = ecs_field(it, Position, 1);
+  Position const *const pos = ecs_field(it, Position, 1);
   assert(sprite);
   assert(pos);
   for (int i = 0; i < it->count; i++) {
-    Sprite curr_frame = sprite[i].frames[sprite->curr_frame];
-    DrawTextureRec(curr_frame.texture, curr_frame.area, pos[i], WHITE);
+    Rectangle curr_frame = sprite[i].frames[sprite->curr_frame];
+    DrawTexturePro(sprite[i].texture, curr_frame,
+                   (Rectangle){.x = pos[i].x,
+                               .y = pos[i].y,
+                               .width = curr_frame.width,
+                               .height = curr_frame.height},
+                   (Vector2){.x = 0, .y = 0}, 0, WHITE);
     if (sprite[i].paused) {
       continue;
     }
@@ -128,21 +133,19 @@ static void SystemDrawBegin(ecs_iter_t *it) {
   ClearBackground(BLACK);
 }
 
-static void SystemDrawEnd(ecs_iter_t *it) {
-  EndDrawing();
-}
+static void SystemDrawEnd(ecs_iter_t *it) { EndDrawing(); }
 
 void RenderImport(ecs_world_t *world) {
   ECS_MODULE(world, Render);
 
   // phases
-  ecs_entity_t DrawBegin       = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t DrawBegin = ecs_new_w_id(world, EcsPhase);
   ecs_entity_t CameraDrawBegin = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t Draw            = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t CameraDraw      = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t CameraDrawRoom  = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t DrawEnd         = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t CameraDrawEnd   = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t Draw = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t CameraDraw = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t CameraDrawRoom = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t DrawEnd = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t CameraDrawEnd = ecs_new_w_id(world, EcsPhase);
 
   ecs_add_pair(world, DrawBegin, EcsDependsOn, EcsPreUpdate);
   ecs_add_pair(world, CameraDrawBegin, EcsDependsOn, DrawBegin);

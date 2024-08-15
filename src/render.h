@@ -5,7 +5,7 @@
 
 typedef struct RectSprite {
   Rectangle dimensions;
-  Color     color;
+  Color color;
 } RectSprite;
 
 typedef Camera2D CameraFollow;

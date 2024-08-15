@@ -9,10 +9,10 @@ ECS_SYSTEM_DECLARE(SystemCheckQuitGame);
 static void SystemGatherInput(ecs_iter_t *it) {
   InputActions *input = ecs_field(it, InputActions, 0);
   assert(input);
-  input->up    = IsKeyDown(KEY_W);
-  input->down  = IsKeyDown(KEY_S);
+  input->up = IsKeyDown(KEY_W);
+  input->down = IsKeyDown(KEY_S);
   input->right = IsKeyDown(KEY_D);
-  input->left  = IsKeyDown(KEY_A);
+  input->left = IsKeyDown(KEY_A);
 }
 
 void InputImport(ecs_world_t *world) {
