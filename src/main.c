@@ -74,6 +74,8 @@ ecs_world_t *world_init() {
   ECS_IMPORT(world, Render);
   ECS_IMPORT(world, Input);
   ECS_IMPORT(world, Player);
+  ECS_IMPORT(world, FlecsStats);
+  ecs_singleton_set(world, EcsRest, {0});
   ecs_set_target_fps(world, 60);
   return world;
 }
