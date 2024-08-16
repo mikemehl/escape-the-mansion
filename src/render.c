@@ -61,21 +61,6 @@ static void SystemCameraUpdate(ecs_iter_t *it) {
   }
 }
 
-static void DrawTile(tmx_tile *tile, Vector2 pos) {
-  tmx_tileset *tileset = tile->tileset;
-  assert(tileset);
-
-  Texture2D *texture = tileset->image->resource_image;
-  assert(texture);
-
-  Rectangle tile_rect = {.x = tile->ul_x,
-                         .y = tile->ul_y,
-                         .width = tile->width,
-                         .height = tile->height};
-
-  DrawTextureRec(*texture, tile_rect, pos, WHITE);
-}
-
 static void SystemDrawRoom(ecs_iter_t *it) {
   const ResourceTable *resource_table = ecs_field(it, ResourceTable, 0);
   assert(resource_table);
