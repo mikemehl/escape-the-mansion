@@ -29,10 +29,10 @@
         },
         "test-room.tmx": {
             "scale": 4,
-            "selectedLayer": 3,
+            "selectedLayer": 1,
             "viewCenter": {
                 "x": 120,
-                "y": 80
+                "y": 80.125
             }
         },
         "test-room.tmx#HauntedHouseProps": {
@@ -60,6 +60,7 @@
         "test-room.tmx"
     ],
     "project": "escape-the-mansion.tiled-project",
+    "property.type": "int",
     "recentFiles": [
         "test-room.tmx",
         "haunted-house.tsx",

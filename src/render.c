@@ -77,30 +77,31 @@ static void DrawTile(tmx_tile *tile, Vector2 pos) {
 }
 
 static void SystemDrawRoom(ecs_iter_t *it) {
-  const Tiled *tiled = ecs_field(it, Tiled, 0);
-  assert(tiled);
-  tmx_layer *layer = tiled->ly_head;
-  tmx_tile **tiles = tiled->tiles;
-  assert(layer);
-  while (layer) {
-    if (layer->type != L_LAYER) {
-      layer = layer->next;
-      continue;
-    }
-    uint32_t *cells = layer->content.gids;
-    for (uint32_t x = 0; x < tiled->width; x++) {
-      for (uint32_t y = 0; y < tiled->height; y++) {
-        uint32_t gid = cells[x + y * tiled->width] & TMX_FLIP_BITS_REMOVAL;
-        if (gid != 0) {
-          tmx_tile *tile = tiles[gid];
-          assert(tile);
-          Position pos = {.x = x * tiled->tile_width,
-                          .y = y * tiled->tile_height};
-          DrawTile(tile, pos);
-        }
+  const ResourceTable *resource_table = ecs_field(it, ResourceTable, 0);
+  assert(resource_table);
+  for (int x = 0; x < resource_table->width_tiles; x++) {
+    for (int y = 0; y < resource_table->height_tiles; y++) {
+      Rectangle floor_source_rec =
+          resource_table->floor_tiles[x + y * resource_table->width_tiles];
+      Rectangle wall_source_rec =
+          resource_table->wall_tiles[x + y * resource_table->width_tiles];
+      if (floor_source_rec.width > 0) {
+        DrawTexturePro(resource_table->haunted_house_tileset, floor_source_rec,
+                       (Rectangle){.x = x * floor_source_rec.width,
+                                   .y = y * floor_source_rec.height,
+                                   .width = floor_source_rec.width,
+                                   .height = floor_source_rec.height},
+                       (Vector2){.x = 0, .y = 0}, 0.0, WHITE);
+      }
+      if (wall_source_rec.width > 0) {
+        DrawTexturePro(resource_table->haunted_house_tileset, wall_source_rec,
+                       (Rectangle){.x = x * wall_source_rec.width,
+                                   .y = y * wall_source_rec.height,
+                                   .width = wall_source_rec.width,
+                                   .height = wall_source_rec.height},
+                       (Vector2){.x = 0, .y = 0}, 0.0, WHITE);
       }
     }
-    layer = layer->next;
   }
 }
 
@@ -160,7 +161,8 @@ void RenderImport(ecs_world_t *world) {
   ECS_SYSTEM_DEFINE(world, SystemDrawBegin, DrawBegin);
   ECS_SYSTEM_DEFINE(world, SystemCameraDrawBegin, CameraDrawBegin,
                     render.CameraFollow);
-  ECS_SYSTEM_DEFINE(world, SystemDrawRoom, CameraDrawRoom, resources.Tiled($));
+  ECS_SYSTEM_DEFINE(world, SystemDrawRoom, CameraDrawRoom,
+                    resources.ResourceTable($));
   ECS_SYSTEM_DEFINE(world, SystemDrawRectSprite, CameraDraw, physics.Position,
                     render.RectSprite);
   ECS_SYSTEM_DEFINE(world, SystemDrawSprite, CameraDraw, physics.Position,

@@ -12,17 +12,6 @@ ECS_COMPONENT_DECLARE(ResourceTable);
 
 static Arena ResourcesArena = {0};
 
-static struct {
-  AnimatedSprite animated_sprites[NUM_ANIMATED_SPRITE_INDEXES];
-} _resource_lut;
-
-Sprite LoadWalkSprite() {
-  Texture2D walk = LoadTexture("./assets/characters/HumanTownsfolkWalk.png");
-  Sprite walk_sprite = {.texture = walk,
-                        .area = {.x = 12, .y = 10, .width = 8, .height = 10}};
-  return walk_sprite;
-}
-
 static void *load_tiled_img(const char *path) {
   Texture2D *img = NULL;
   img = tmx_alloc_func(img, sizeof(Texture2D));
@@ -46,6 +35,59 @@ static void LoadTiled(ecs_world_t *world) {
     exit(1);
   }
   ecs_singleton_set_ptr(world, Tiled, test_room);
+}
+
+static void LoadRooms(ecs_world_t *const world) {
+  ResourceTable *resource_table =
+      ecs_get_mut(world, ecs_id(ResourceTable), ResourceTable);
+  const Tiled *tiled = ecs_singleton_get(world, Tiled);
+  assert(resource_table);
+  assert(tiled);
+  resource_table->width_tiles = tiled->width;
+  resource_table->height_tiles = tiled->height;
+  resource_table->floor_tiles = arena_alloc(
+      &ResourcesArena, sizeof(Rectangle) * resource_table->width_tiles *
+                           resource_table->height_tiles);
+  resource_table->wall_tiles = arena_alloc(
+      &ResourcesArena, sizeof(Rectangle) * resource_table->width_tiles *
+                           resource_table->height_tiles);
+  tmx_tileset const *const tileset =
+      tmx_find_tileset_by_name(tiled, "haunted-house")->tileset;
+  resource_table->haunted_house_tileset =
+      *((Texture2D *)tileset->image->resource_image);
+  tmx_layer const *const floor_layer = tmx_find_layer_by_id(tiled, 1);
+  tmx_layer const *const walls_layer = tmx_find_layer_by_id(tiled, 2);
+  for (int x = 0; x < resource_table->width_tiles; x++) {
+    for (int y = 0; y < resource_table->height_tiles; y++) {
+      uint32_t const idx = x + y * resource_table->width_tiles;
+      uint32_t floor_gid =
+          floor_layer->content.gids[idx] & TMX_FLIP_BITS_REMOVAL;
+      uint32_t wall_gid =
+          walls_layer->content.gids[idx] & TMX_FLIP_BITS_REMOVAL;
+      if (floor_gid == 0) {
+        resource_table->floor_tiles[idx] = (Rectangle){0};
+      } else {
+        tmx_tile const *const floor_tile = tiled->tiles[floor_gid];
+        resource_table->floor_tiles[idx] = (Rectangle){
+            .x = floor_tile->ul_x,
+            .y = floor_tile->ul_y,
+            .width = floor_tile->width,
+            .height = floor_tile->height,
+        };
+      }
+      if (wall_gid == 0) {
+        resource_table->wall_tiles[idx] = (Rectangle){0};
+      } else {
+        tmx_tile const *const wall_tile = tiled->tiles[wall_gid];
+        resource_table->wall_tiles[idx] = (Rectangle){
+            .x = wall_tile->ul_x,
+            .y = wall_tile->ul_y,
+            .width = wall_tile->width,
+            .height = wall_tile->height,
+        };
+      }
+    }
+  }
 }
 
 static void LoadAnimations(ecs_world_t *const world) {
@@ -136,4 +178,5 @@ void ResourcesImport(ecs_world_t *world) {
   ecs_singleton_add(world, ResourceTable);
   LoadTiled(world);
   LoadAnimations(world);
+  LoadRooms(world);
 }

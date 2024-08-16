@@ -31,6 +31,11 @@ typedef enum AnimatedSpriteIndex {
 
 typedef struct ResourceTable {
   AnimatedSprite animated_sprites[NUM_ANIMATED_SPRITE_INDEXES];
+  Rectangle *floor_tiles;
+  Rectangle *wall_tiles;
+  Texture2D haunted_house_tileset;
+  int width_tiles;
+  int height_tiles;
 } ResourceTable;
 
 extern ECS_COMPONENT_DECLARE(Sprite);
@@ -39,7 +44,6 @@ extern ECS_COMPONENT_DECLARE(AnimatedSprite);
 extern ECS_COMPONENT_DECLARE(ResourceTable);
 
 void ResourcesImport(ecs_world_t *world);
-Sprite LoadWalkSprite();
 Vector2 GetPlayerStartPoint(ecs_world_t *world);
 void FreeResources();
 
