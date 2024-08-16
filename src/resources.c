@@ -142,32 +142,19 @@ static void LoadAnimations(ecs_world_t *const world) {
   }
 }
 
-void FreeResources() { arena_free(&ResourcesArena); }
-
-Vector2 GetPlayerStartPoint(ecs_world_t *world) {
+static void LoadPlayerStartPoint(ecs_world_t *world) {
   const Tiled *tiled = ecs_singleton_get(world, Tiled);
   assert(tiled);
-  tmx_layer *layer = tiled->ly_head;
-  assert(layer);
-  while (layer) {
-    if (layer->type != L_OBJGR) {
-      layer = layer->next;
-      continue;
-    }
-    tmx_object *obj = layer->content.objgr->head;
-    while (obj) {
-      if (obj->obj_type != OT_POINT) {
-        obj = obj->next;
-        continue;
-      }
-      Vector2 start = {.x = obj->x, .y = obj->y};
-      return start;
-    }
-    layer = layer->next;
-  }
-  Vector2 start = {.x = 0, .y = 0};
-  return start;
+  ResourceTable *resource_table =
+      ecs_get_mut(world, ecs_id(ResourceTable), ResourceTable);
+  assert(resource_table);
+  tmx_object *player_start = tmx_find_object_by_id(tiled, 1);
+  assert(player_start);
+  resource_table->player_start =
+      (Vector2){.x = player_start->x, .y = player_start->y};
 }
+
+void FreeResources() { arena_free(&ResourcesArena); }
 
 void ResourcesImport(ecs_world_t *world) {
   ECS_MODULE(world, Resources);
@@ -179,4 +166,5 @@ void ResourcesImport(ecs_world_t *world) {
   LoadTiled(world);
   LoadAnimations(world);
   LoadRooms(world);
+  LoadPlayerStartPoint(world);
 }

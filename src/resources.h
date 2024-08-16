@@ -36,6 +36,7 @@ typedef struct ResourceTable {
   Texture2D haunted_house_tileset;
   int width_tiles;
   int height_tiles;
+  Vector2 player_start;
 } ResourceTable;
 
 extern ECS_COMPONENT_DECLARE(Sprite);
@@ -44,7 +45,6 @@ extern ECS_COMPONENT_DECLARE(AnimatedSprite);
 extern ECS_COMPONENT_DECLARE(ResourceTable);
 
 void ResourcesImport(ecs_world_t *world);
-Vector2 GetPlayerStartPoint(ecs_world_t *world);
 void FreeResources();
 
 #endif

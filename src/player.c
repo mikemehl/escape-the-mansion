@@ -62,9 +62,11 @@ static void SystemPlayerSpriteUpdate(ecs_iter_t *it) {
 
 void AddPlayer(ecs_world_t *world) {
   assert(world);
+  const ResourceTable *resource_table = ecs_singleton_get(world, ResourceTable);
+  assert(resource_table);
   ecs_entity_t player = ecs_new(world);
   ecs_add(world, player, PlayerTag);
-  Position pos = GetPlayerStartPoint(world);
+  Position pos = resource_table->player_start;
   ecs_set(world, player, Position, {.x = pos.x, .y = pos.y});
   ecs_set(world, player, Velocity, {0});
   ecs_set(world, player, Facing, {.x = 1, .y = -1});
@@ -78,7 +80,6 @@ void AddPlayer(ecs_world_t *world) {
            .target = pos,
            .rotation = 0,
            .offset = {.x = 640 / 2, .y = 480 / 2}});
-  const ResourceTable *resource_table = ecs_singleton_get(world, ResourceTable);
   ecs_set_ptr(
       world, player, AnimatedSprite,
       (const void *)&resource_table->animated_sprites[ANIM_PLAYER_WALK_FR]);
