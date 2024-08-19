@@ -74,7 +74,7 @@ void AddPlayer(ecs_world_t *world) {
           {.color = GREEN,
            .dimensions = {.x = pos.x, .y = pos.y, .width = 8, .height = 10}});
   ecs_set(world, player, CollisionBox,
-          {.x = pos.x, .y = pos.y, .width = 8, .height = 8});
+          {.x = pos.x, .y = pos.y, .width = 8, .height = 9});
   ecs_set(world, player, CameraFollow,
           {.zoom = 4.0f,
            .target = pos,
