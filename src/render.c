@@ -1,12 +1,16 @@
 #include "render.h"
+#include "flecs/addons/flecs_c.h"
 #include "physics.h"
 #include "resources.h"
 #include "tmx.h"
 #include <flecs.h>
 #include <raylib.h>
 
+typedef Shader Spotlight;
+
 ECS_COMPONENT_DECLARE(RectSprite);
 ECS_COMPONENT_DECLARE(CameraFollow);
+ECS_COMPONENT_DECLARE(Spotlight);
 ECS_SYSTEM_DECLARE(SystemDrawSprite);
 ECS_SYSTEM_DECLARE(SystemDrawRectSprite);
 ECS_SYSTEM_DECLARE(SystemDrawBegin);
@@ -115,11 +119,21 @@ static void SystemDrawAnimatedSprite(ecs_iter_t *it) {
 }
 
 static void SystemDrawBegin(ecs_iter_t *it) {
+  const Spotlight *spotlight = ecs_singleton_get(it->world, Spotlight);
   BeginDrawing();
+  /* BeginShaderMode(*spotlight); */
   ClearBackground(BLACK);
 }
 
-static void SystemDrawEnd(ecs_iter_t *it) { EndDrawing(); }
+static void SystemDrawEnd(ecs_iter_t *it) {
+  /* EndShaderMode(); */
+  EndDrawing();
+}
+
+static void InitSpotlight(ecs_world_t *world) {
+  Spotlight spotlight = LoadShader(0, "src/spotlightfs.glsl");
+  ecs_singleton_set_ptr(world, Spotlight, &spotlight);
+}
 
 void RenderImport(ecs_world_t *world) {
   ECS_MODULE(world, Render);
@@ -143,6 +157,9 @@ void RenderImport(ecs_world_t *world) {
 
   ECS_COMPONENT_DEFINE(world, RectSprite);
   ECS_COMPONENT_DEFINE(world, CameraFollow);
+  ECS_COMPONENT_DEFINE(world, Spotlight);
+  InitSpotlight(world);
+
   ECS_SYSTEM_DEFINE(world, SystemDrawBegin, DrawBegin);
   ECS_SYSTEM_DEFINE(world, SystemCameraDrawBegin, CameraDrawBegin,
                     render.CameraFollow);
