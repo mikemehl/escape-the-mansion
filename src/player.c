@@ -2,7 +2,6 @@
 #include "flecs/addons/flecs_c.h"
 #include "input.h"
 #include "physics.h"
-#include "raylib.h"
 #include "raymath.h"
 #include "render.h"
 #include "resources.h"
@@ -10,7 +9,6 @@
 ECS_TAG_DECLARE(PlayerTag);
 ECS_SYSTEM_DECLARE(SystemPlayerMove);
 ECS_SYSTEM_DECLARE(SystemPlayerSpriteUpdate);
-ECS_SYSTEM_DECLARE(SystemPlayerUpdateShader);
 ECS_QUERY_DECLARE(PlayerCollisionQuery);
 
 static void SystemPlayerMove(ecs_iter_t *it) {
@@ -62,16 +60,6 @@ static void SystemPlayerSpriteUpdate(ecs_iter_t *it) {
   }
 }
 
-static void SystemPlayerUpdateShader(ecs_iter_t *it) {
-  Position const *const pos = ecs_field(it, Position, 0);
-  Spotlight const *const spotlight = ecs_singleton_get(it->world, Spotlight);
-  assert(pos);
-  assert(spotlight);
-  int spotLoc = GetShaderLocation(*spotlight, "spotLoc");
-  SetShaderValue(*spotlight, spotLoc, (float[2]){pos->x, pos->y},
-                 SHADER_UNIFORM_VEC2);
-}
-
 void AddPlayer(ecs_world_t *world) {
   assert(world);
   const ResourceTable *resource_table = ecs_singleton_get(world, ResourceTable);
@@ -107,6 +95,4 @@ void PlayerImport(ecs_world_t *world) {
   ECS_SYSTEM_DEFINE(world, SystemPlayerSpriteUpdate, EcsPreUpdate,
                     physics.Facing, resources.AnimatedSprite, physics.Velocity,
                     player.PlayerTag);
-  ECS_SYSTEM_DEFINE(world, SystemPlayerUpdateShader, EcsPreUpdate,
-                    physics.Position, player.PlayerTag);
 }

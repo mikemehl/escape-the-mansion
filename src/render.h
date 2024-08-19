@@ -9,11 +9,9 @@ typedef struct RectSprite {
 } RectSprite;
 
 typedef Camera2D CameraFollow;
-typedef Shader Spotlight;
 
 extern ECS_COMPONENT_DECLARE(RectSprite);
 extern ECS_COMPONENT_DECLARE(CameraFollow);
-extern ECS_COMPONENT_DECLARE(Spotlight);
 extern ECS_SYSTEM_DECLARE(SystemDrawSprite);
 extern ECS_SYSTEM_DECLARE(SystemDrawRectSprite);
 extern ECS_SYSTEM_DECLARE(SystemDrawAnimatedSprite);

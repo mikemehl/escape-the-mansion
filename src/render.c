@@ -7,7 +7,6 @@
 
 ECS_COMPONENT_DECLARE(RectSprite);
 ECS_COMPONENT_DECLARE(CameraFollow);
-ECS_COMPONENT_DECLARE(Spotlight);
 ECS_SYSTEM_DECLARE(SystemDrawSprite);
 ECS_SYSTEM_DECLARE(SystemDrawRectSprite);
 ECS_SYSTEM_DECLARE(SystemDrawBegin);
@@ -116,19 +115,11 @@ static void SystemDrawAnimatedSprite(ecs_iter_t *it) {
 }
 
 static void SystemDrawBegin(ecs_iter_t *it) {
-  Spotlight const *const light = ecs_singleton_get(it->world, Spotlight);
-  assert(light);
   BeginDrawing();
   ClearBackground(BLACK);
-  /* TODO: Make shaders work. */
-  /* BeginShaderMode(*light); */
 }
 
-static void SystemDrawEnd(ecs_iter_t *it) {
-  /* TODO: Make shaders work. */
-  /* EndShaderMode(); */
-  EndDrawing();
-}
+static void SystemDrawEnd(ecs_iter_t *it) { EndDrawing(); }
 
 void RenderImport(ecs_world_t *world) {
   ECS_MODULE(world, Render);
@@ -152,14 +143,6 @@ void RenderImport(ecs_world_t *world) {
 
   ECS_COMPONENT_DEFINE(world, RectSprite);
   ECS_COMPONENT_DEFINE(world, CameraFollow);
-  ECS_COMPONENT_DEFINE(world, Spotlight);
-  ecs_singleton_add(world, Spotlight);
-
-  Spotlight *const light = ecs_get_mut(world, ecs_id(Spotlight), Spotlight);
-  *light = LoadShader("src/flashlight.vs", "src/flashlight.fs");
-  int spotLoc = GetShaderLocation(*light, "spotLoc");
-  SetShaderValue(*light, spotLoc, (float[2]){0, 0}, SHADER_UNIFORM_VEC2);
-
   ECS_SYSTEM_DEFINE(world, SystemDrawBegin, DrawBegin);
   ECS_SYSTEM_DEFINE(world, SystemCameraDrawBegin, CameraDrawBegin,
                     render.CameraFollow);
