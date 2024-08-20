@@ -32,10 +32,7 @@ static void AddWalls(ecs_world_t *world) {
       ecs_entity_t wall_id = ecs_new(world);
       ecs_set(world, wall_id, Position, {.x = wall->x, .y = wall->y});
       ecs_set(world, wall_id, CollisionBox,
-              {.x = wall->x,
-               .y = wall->y,
-               .width = wall->width,
-               .height = wall->height});
+              {.x = 0, .y = 0, .width = wall->width, .height = wall->height});
     }
     wall = wall->next;
   }

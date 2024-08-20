@@ -1,6 +1,6 @@
 #include "physics.h"
-#include <flecs.h>
 #include "flecs/addons/flecs_c.h"
+#include <flecs.h>
 #include <raylib.h>
 
 ECS_COMPONENT_DECLARE(Position);
@@ -40,44 +40,44 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
         .terms =
             {
                 {.id = ecs_id(CollisionBox)},
+                {.id = ecs_id(Position)},
             },
     };
     ecs_query_t *other_query = ecs_query_init(it->world, &other_query_desc);
     ecs_iter_t other_it = ecs_query_iter(it->world, other_query);
     while (ecs_query_next(&other_it)) {
       CollisionBox *other_box = ecs_field(&other_it, CollisionBox, 0);
+      Position *other_pos = ecs_field(&other_it, Position, 1);
       assert(other_box);
+      assert(other_pos);
+
       for (int j = 0; j < other_it.count; j++) {
         if (other_it.entities[j] == it->entities[i]) {
           continue;
         }
-        box[i].x += vel[i].x;
-        box[i].y += vel[i].y;
-        if (CheckCollisionRecs(box[i], other_box[j])) {
+
+        CollisionBox test_box_i =
+            (CollisionBox){.x = pos[i].x + vel[i].x + box[i].x,
+                           .y = pos[i].y + vel[i].y + box[i].y,
+                           .width = box[i].width,
+                           .height = box[i].height};
+        CollisionBox test_box_j =
+            (CollisionBox){.x = other_pos[j].x + other_box[j].x,
+                           .y = other_pos[j].y + other_box[j].y,
+                           .width = other_box[j].width,
+                           .height = other_box[j].height};
+
+        if (CheckCollisionRecs(test_box_i, test_box_j)) {
           vel[i].x *= -1;
-          box[i].x += vel[i].x;
-          if (CheckCollisionRecs(box[i], other_box[j])) {
+          test_box_i.x = pos[i].x + vel[i].x + box[i].x;
+          if (CheckCollisionRecs(test_box_i, test_box_j)) {
             vel[i].y *= -1;
-            box[i].y += vel[i].y;
+            test_box_i.y = pos[i].y + vel[i].y + box[i].y;
           }
         }
-        box[i].x = pos[i].x;
-        box[i].y = pos[i].y;
       }
     }
     ecs_query_fini(other_query);
-  }
-}
-
-static void SystemUpdateCollisionBoxPositions(ecs_iter_t *it) {
-  Position *pos = ecs_field(it, Position, 0);
-  CollisionBox *box = ecs_field(it, CollisionBox, 1);
-  assert(pos);
-  assert(box);
-
-  for (int i = 0; i < it->count; i++) {
-    box[i].x = pos[i].x;
-    box[i].y = pos[i].y;
   }
 }
 
@@ -101,7 +101,5 @@ void PhysicsImport(ecs_world_t *world) {
                     Velocity);
   ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, EcsPostUpdate, Position,
                     Velocity, CollisionBox);
-  ECS_SYSTEM_DEFINE(world, SystemUpdateCollisionBoxPositions, EcsOnStore,
-                    Position, CollisionBox);
   ECS_QUERY_DEFINE(world, CollisionQuery, CollisionBox);
 }
