@@ -70,9 +70,10 @@ void AddPlayer(ecs_world_t *world) {
   ecs_set(world, player, Position, {.x = pos.x, .y = pos.y});
   ecs_set(world, player, Velocity, {0});
   ecs_set(world, player, Facing, {.x = 1, .y = -1});
-  ecs_set(world, player, RectSprite,
-          {.color = GREEN,
-           .dimensions = {.x = pos.x, .y = pos.y, .width = 8, .height = 10}});
+  /* ecs_set(world, player, RectSprite, */
+  /*         {.color = GREEN, */
+  /*          .dimensions = {.x = pos.x, .y = pos.y, .width = 8, .height =
+   * 10}}); */
   ecs_set(world, player, CollisionBox,
           {.x = 0, .y = 0, .width = 8, .height = 9});
   ecs_set(world, player, CameraFollow,

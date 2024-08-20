@@ -20,6 +20,7 @@ ECS_SYSTEM_DECLARE(SystemCameraDrawEnd);
 ECS_SYSTEM_DECLARE(SystemCameraUpdate);
 ECS_SYSTEM_DECLARE(SystemDrawRoom);
 ECS_SYSTEM_DECLARE(SystemDrawAnimatedSprite);
+ECS_SYSTEM_DECLARE(SystemDrawSpotlight);
 
 static void SystemDrawSprite(ecs_iter_t *it) {
   Position *p = ecs_field(it, Position, 0);
@@ -119,15 +120,17 @@ static void SystemDrawAnimatedSprite(ecs_iter_t *it) {
 }
 
 static void SystemDrawBegin(ecs_iter_t *it) {
-  const Spotlight *spotlight = ecs_singleton_get(it->world, Spotlight);
   BeginDrawing();
-  /* BeginShaderMode(*spotlight); */
   ClearBackground(BLACK);
 }
 
-static void SystemDrawEnd(ecs_iter_t *it) {
-  /* EndShaderMode(); */
-  EndDrawing();
+static void SystemDrawEnd(ecs_iter_t *it) { EndDrawing(); }
+
+static void SystemDrawSpotlight(ecs_iter_t *it) {
+  const Spotlight *spotlight = ecs_singleton_get(it->world, Spotlight);
+  BeginShaderMode(*spotlight);
+  DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RED);
+  EndShaderMode();
 }
 
 static void InitSpotlight(ecs_world_t *world) {
@@ -141,11 +144,12 @@ void RenderImport(ecs_world_t *world) {
   // phases
   ecs_entity_t DrawBegin = ecs_new_w_id(world, EcsPhase);
   ecs_entity_t CameraDrawBegin = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t Draw = ecs_new_w_id(world, EcsPhase);
   ecs_entity_t CameraDraw = ecs_new_w_id(world, EcsPhase);
   ecs_entity_t CameraDrawRoom = ecs_new_w_id(world, EcsPhase);
-  ecs_entity_t DrawEnd = ecs_new_w_id(world, EcsPhase);
   ecs_entity_t CameraDrawEnd = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t Draw = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t SpotlightDraw = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t DrawEnd = ecs_new_w_id(world, EcsPhase);
 
   ecs_add_pair(world, DrawBegin, EcsDependsOn, EcsPreUpdate);
   ecs_add_pair(world, CameraDrawBegin, EcsDependsOn, DrawBegin);
@@ -153,7 +157,8 @@ void RenderImport(ecs_world_t *world) {
   ecs_add_pair(world, CameraDraw, EcsDependsOn, CameraDrawRoom);
   ecs_add_pair(world, CameraDrawEnd, EcsDependsOn, CameraDraw);
   ecs_add_pair(world, Draw, EcsDependsOn, CameraDrawEnd);
-  ecs_add_pair(world, DrawEnd, EcsDependsOn, Draw);
+  ecs_add_pair(world, SpotlightDraw, EcsDependsOn, Draw);
+  ecs_add_pair(world, DrawEnd, EcsDependsOn, SpotlightDraw);
 
   ECS_COMPONENT_DEFINE(world, RectSprite);
   ECS_COMPONENT_DEFINE(world, CameraFollow);
@@ -176,4 +181,5 @@ void RenderImport(ecs_world_t *world) {
   ECS_SYSTEM_DEFINE(world, SystemDrawEnd, DrawEnd);
   ECS_SYSTEM_DEFINE(world, SystemCameraUpdate, DrawEnd, render.CameraFollow,
                     physics.Position);
+  ECS_SYSTEM_DEFINE(world, SystemDrawSpotlight, SpotlightDraw);
 }
