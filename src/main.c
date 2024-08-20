@@ -2,6 +2,7 @@
 #include <flecs.h>
 #include <raylib.h>
 
+#include "door.h"
 #include "input.h"
 #include "physics.h"
 #include "player.h"
@@ -63,6 +64,7 @@ ecs_world_t *EcsSetup() {
   ECS_IMPORT(world, Render);
   ECS_IMPORT(world, Input);
   ECS_IMPORT(world, Player);
+  ECS_IMPORT(world, Door);
   ECS_IMPORT(world, FlecsStats);
   ecs_singleton_set(world, EcsRest, {0});
   ecs_set_target_fps(world, 60);

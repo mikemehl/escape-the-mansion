@@ -1,5 +1,6 @@
 #include "resources.h"
 #include "arena.h"
+#include "door.h"
 #include "flecs/addons/flecs_c.h"
 #include "tmx.h"
 #include <raylib.h>
@@ -171,6 +172,10 @@ static void LoadPlayerStartPoint(ecs_world_t *world) {
       (Vector2){.x = player_start->x, .y = player_start->y};
 }
 
+static void LoadDoors(ecs_world_t *world) {
+  // TODO
+}
+
 void FreeResources() { arena_free(&ResourcesArena); }
 
 void ResourcesImport(ecs_world_t *world) {
@@ -183,5 +188,6 @@ void ResourcesImport(ecs_world_t *world) {
   LoadTiled(world);
   LoadAnimations(world);
   LoadRooms(world);
+  LoadDoors(world);
   LoadPlayerStartPoint(world);
 }

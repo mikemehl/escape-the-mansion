@@ -42,7 +42,9 @@ add_executable(
   ./src/render.c
   ./src/resources.c
   ./src/player.c
-  ./src/arena.c)
+  ./src/arena.c
+  ./src/door.c
+)
 
 target_include_directories(escape-the-mansion
   PUBLIC
