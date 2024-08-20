@@ -1,6 +1,6 @@
 #include "input.h"
-#include <flecs.h>
 #include "raylib.h"
+#include <flecs.h>
 
 ECS_COMPONENT_DECLARE(InputActions);
 ECS_SYSTEM_DECLARE(SystemGatherInput);
@@ -18,9 +18,12 @@ static void SystemGatherInput(ecs_iter_t *it) {
 void InputImport(ecs_world_t *world) {
   ECS_MODULE(world, Input);
   ECS_COMPONENT_DEFINE(world, InputActions);
-  ecs_singleton_set(
-      world, InputActions,
-      {.up = false, .down = false, .left = false, .right = false});
+  ecs_singleton_set(world, InputActions,
+                    {.up = false,
+                     .down = false,
+                     .left = false,
+                     .right = false,
+                     .action = false});
   ECS_SYSTEM_DEFINE(world, SystemGatherInput, EcsPreUpdate,
                     input.InputActions($));
 }

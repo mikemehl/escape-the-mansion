@@ -75,6 +75,8 @@ static void SystemDrawRoom(ecs_iter_t *it) {
           resource_table->floor_tiles[x + y * resource_table->width_tiles];
       Rectangle wall_source_rec =
           resource_table->wall_tiles[x + y * resource_table->width_tiles];
+      Rectangle door_source_rec =
+          resource_table->door_tiles[x + y * resource_table->width_tiles];
       if (floor_source_rec.width > 0) {
         DrawTexturePro(resource_table->haunted_house_tileset, floor_source_rec,
                        (Rectangle){.x = x * floor_source_rec.width,
@@ -89,6 +91,14 @@ static void SystemDrawRoom(ecs_iter_t *it) {
                                    .y = y * wall_source_rec.height,
                                    .width = wall_source_rec.width,
                                    .height = wall_source_rec.height},
+                       (Vector2){.x = 0, .y = 0}, 0.0, WHITE);
+      }
+      if (door_source_rec.width > 0) {
+        DrawTexturePro(resource_table->haunted_house_tileset, door_source_rec,
+                       (Rectangle){.x = x * door_source_rec.width,
+                                   .y = y * door_source_rec.height,
+                                   .width = door_source_rec.width,
+                                   .height = door_source_rec.height},
                        (Vector2){.x = 0, .y = 0}, 0.0, WHITE);
       }
     }

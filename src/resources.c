@@ -51,12 +51,16 @@ static void LoadRooms(ecs_world_t *const world) {
   resource_table->wall_tiles = arena_alloc(
       &ResourcesArena, sizeof(Rectangle) * resource_table->width_tiles *
                            resource_table->height_tiles);
+  resource_table->door_tiles = arena_alloc(
+      &ResourcesArena, sizeof(Rectangle) * resource_table->width_tiles *
+                           resource_table->height_tiles);
   tmx_tileset const *const tileset =
       tmx_find_tileset_by_name(tiled, "haunted-house")->tileset;
   resource_table->haunted_house_tileset =
       *((Texture2D *)tileset->image->resource_image);
   tmx_layer const *const floor_layer = tmx_find_layer_by_id(tiled, 1);
   tmx_layer const *const walls_layer = tmx_find_layer_by_id(tiled, 2);
+  tmx_layer const *const doors_layer = tmx_find_layer_by_id(tiled, 6);
   for (int x = 0; x < resource_table->width_tiles; x++) {
     for (int y = 0; y < resource_table->height_tiles; y++) {
       uint32_t const idx = x + y * resource_table->width_tiles;
@@ -64,6 +68,8 @@ static void LoadRooms(ecs_world_t *const world) {
           floor_layer->content.gids[idx] & TMX_FLIP_BITS_REMOVAL;
       uint32_t wall_gid =
           walls_layer->content.gids[idx] & TMX_FLIP_BITS_REMOVAL;
+      uint32_t door_gid =
+          doors_layer->content.gids[idx] & TMX_FLIP_BITS_REMOVAL;
       if (floor_gid == 0) {
         resource_table->floor_tiles[idx] = (Rectangle){0};
       } else {
@@ -84,6 +90,17 @@ static void LoadRooms(ecs_world_t *const world) {
             .y = wall_tile->ul_y,
             .width = wall_tile->width,
             .height = wall_tile->height,
+        };
+      }
+      if (door_gid == 0) {
+        resource_table->door_tiles[idx] = (Rectangle){0};
+      } else {
+        tmx_tile const *const door_tile = tiled->tiles[door_gid];
+        resource_table->door_tiles[idx] = (Rectangle){
+            .x = door_tile->ul_x,
+            .y = door_tile->ul_y,
+            .width = door_tile->width,
+            .height = door_tile->height,
         };
       }
     }

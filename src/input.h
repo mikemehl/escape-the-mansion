@@ -8,6 +8,7 @@ typedef struct InputActions {
   bool left;
   bool down;
   bool right;
+  bool action;
 } InputActions;
 
 extern ECS_COMPONENT_DECLARE(InputActions);
