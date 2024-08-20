@@ -29,7 +29,7 @@
         },
         "test-room.tmx": {
             "scale": 4,
-            "selectedLayer": 2,
+            "selectedLayer": 3,
             "viewCenter": {
                 "x": 148.5,
                 "y": 141.375

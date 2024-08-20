@@ -1,5 +1,6 @@
 #ifndef __IMAGE__H__
 #define __IMAGE__H__
+#include "door.h"
 #include <flecs.h>
 #include <raylib.h>
 #include <tmx.h>
@@ -38,6 +39,11 @@ typedef struct ResourceTable {
   int width_tiles;
   int height_tiles;
   Vector2 player_start;
+  struct {
+    DoorTile obj;
+    Vector2 pos;
+  } *doors;
+  int num_doors;
 } ResourceTable;
 
 extern ECS_COMPONENT_DECLARE(Sprite);

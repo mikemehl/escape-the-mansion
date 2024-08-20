@@ -173,7 +173,43 @@ static void LoadPlayerStartPoint(ecs_world_t *world) {
 }
 
 static void LoadDoors(ecs_world_t *world) {
-  // TODO
+  const Tiled *tiled = ecs_singleton_get(world, Tiled);
+  assert(tiled);
+  ResourceTable *resource_table =
+      ecs_get_mut(world, ecs_id(ResourceTable), ResourceTable);
+  assert(resource_table);
+
+  tmx_layer const *const doors_layer = tmx_find_layer_by_id(tiled, 7);
+  assert(doors_layer);
+  tmx_object const *door_objs = doors_layer->content.objgr->head;
+  assert(door_objs);
+
+  const size_t alloc_size = sizeof(struct {
+    Vector2 _;
+    DoorTile __;
+  });
+
+  resource_table->doors = arena_alloc(&ResourcesArena, alloc_size);
+  int door_count = 0;
+
+  while (door_objs) {
+    resource_table->doors[door_count].pos =
+        (Vector2){.x = door_objs->x, .y = door_objs->y};
+    int const to_id =
+        tmx_get_property(door_objs->properties, "to")->value.object_id;
+    tmx_object const *const to_obj = tmx_find_object_by_id(tiled, to_id);
+    assert(to_obj);
+    resource_table->doors[door_count].obj =
+        (DoorTile){.to = (Vector2){.x = to_obj->x, .y = to_obj->y}};
+    door_count++;
+    resource_table->doors =
+        arena_realloc(&ResourcesArena, resource_table->doors,
+                      (door_count - 1) * alloc_size, door_count * alloc_size);
+
+    door_objs = door_objs->next;
+  }
+  resource_table->num_doors = door_count;
+  TraceLog(LOG_INFO, "NUMBER OF DOOR OBJECTS: %d", door_count);
 }
 
 void FreeResources() { arena_free(&ResourcesArena); }
