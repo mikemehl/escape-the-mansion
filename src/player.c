@@ -1,7 +1,9 @@
 #include "player.h"
+#include "door.h"
 #include "flecs/addons/flecs_c.h"
 #include "input.h"
 #include "physics.h"
+#include "raylib.h"
 #include "raymath.h"
 #include "render.h"
 #include "resources.h"
@@ -9,6 +11,7 @@
 ECS_TAG_DECLARE(PlayerTag);
 ECS_SYSTEM_DECLARE(SystemPlayerMove);
 ECS_SYSTEM_DECLARE(SystemPlayerSpriteUpdate);
+ECS_SYSTEM_DECLARE(SystemPlayerAction);
 ECS_QUERY_DECLARE(PlayerCollisionQuery);
 
 static void SystemPlayerMove(ecs_iter_t *it) {
@@ -60,6 +63,38 @@ static void SystemPlayerSpriteUpdate(ecs_iter_t *it) {
   }
 }
 
+static void SystemPlayerAction(ecs_iter_t *it) {
+  Position *pos = ecs_field(it, Velocity, 0);
+  const InputActions *input = ecs_singleton_get(it->world, InputActions);
+  assert(pos);
+  assert(input);
+
+  if (!input->action) {
+    return;
+  }
+
+  ecs_query_t *door_query = ecs_query(
+      it->world,
+      {.terms = {{.id = ecs_id(DoorTile)}, {.id = ecs_id(Position)}}});
+  ecs_iter_t door_iter = ecs_query_iter(it->world, door_query);
+  while (ecs_query_next(&door_iter)) {
+    DoorTile *door_info = ecs_field(&door_iter, DoorTile, 0);
+    Position *door_pos = ecs_field(&door_iter, Position, 1);
+    for (int i = 0; i < door_iter.count; i++) {
+      float distance = Vector2Distance(door_pos[i], pos[0]);
+      if (fabs(32.0 - distance) > 0) {
+        ecs_add_pair(it->world, it->entities[0], ecs_id(UsingDoor),
+                     door_iter.entities[i]);
+        goto _door_exit;
+      }
+    }
+  }
+_door_exit:
+  ecs_iter_fini(&door_iter);
+  ecs_query_fini(door_query);
+  return;
+}
+
 void AddPlayer(ecs_world_t *world) {
   assert(world);
   const ResourceTable *resource_table = ecs_singleton_get(world, ResourceTable);
@@ -95,5 +130,7 @@ void PlayerImport(ecs_world_t *world) {
                     player.PlayerTag, physics.Facing);
   ECS_SYSTEM_DEFINE(world, SystemPlayerSpriteUpdate, EcsPreUpdate,
                     physics.Facing, resources.AnimatedSprite, physics.Velocity,
+                    player.PlayerTag);
+  ECS_SYSTEM_DEFINE(world, SystemPlayerAction, EcsPreUpdate, physics.Position,
                     player.PlayerTag);
 }

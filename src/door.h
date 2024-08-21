@@ -6,6 +6,7 @@
 typedef struct DoorTile {
   Vector2 to;
   bool locked;
+  int cooldown;
 } DoorTile;
 
 extern ECS_COMPONENT_DECLARE(DoorTile);

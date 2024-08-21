@@ -13,6 +13,7 @@ static void SystemGatherInput(ecs_iter_t *it) {
   input->down = IsKeyDown(KEY_S);
   input->right = IsKeyDown(KEY_D);
   input->left = IsKeyDown(KEY_A);
+  input->action = IsKeyDown(KEY_SPACE);
 }
 
 void InputImport(ecs_world_t *world) {
