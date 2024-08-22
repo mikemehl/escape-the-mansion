@@ -200,9 +200,7 @@ static void LoadDoors(ecs_world_t *world) {
     tmx_object const *const to_obj = tmx_find_object_by_id(tiled, to_id);
     assert(to_obj);
     resource_table->doors[door_count].obj =
-        (DoorTile){.to = (Vector2){.x = to_obj->x, .y = to_obj->y},
-                   .locked = false,
-                   .cooldown = 0};
+        (DoorTile){.to = (Vector2){.x = to_obj->x, .y = to_obj->y}};
     door_count++;
     resource_table->doors =
         arena_realloc(&ResourcesArena, resource_table->doors,
