@@ -1,8 +1,18 @@
 {
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "diagnostics.libraryFiles": "Disable",
   "diagnostics.globals": [
     "love"
   ],
+  "workspace.checkThirdParty": "Apply",
   "workspace.library": [
-    "${3rd}/love2d/library"
+    "${3rd}/love2d/library",
+    "./sti",
+    "./concord",
+    "./bump.lua",
+    "./vudu"
+  ],
+  "workspace.ignoreDir": [
+    "./third-party"
   ]
 }

@@ -1,0 +1,3 @@
+*.o
+debugger_lua.h
+test/embed
