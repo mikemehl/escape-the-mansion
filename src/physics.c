@@ -1,7 +1,9 @@
 #include "physics.h"
 #include "flecs/addons/flecs_c.h"
+#include "flecs/private/api_defines.h"
 #include <flecs.h>
 #include <raylib.h>
+#include <raymath.h>
 
 ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Velocity);
@@ -78,6 +80,35 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
       }
     }
     ecs_query_fini(other_query);
+  }
+}
+
+static void SystemCollisionResolve(ecs_iter_t *it) {
+  for (int i = 0; i < it->count; i++) {
+    ecs_entity_t pair = it->entities[i];
+    ecs_entity_t first = ecs_pair_first(it->world, pair);
+    ecs_entity_t second = ecs_pair_second(it->world, pair);
+    assert(first > 0);
+    assert(second > 0);
+    const CollisionBox *first_collider =
+        ecs_get(it->world, first, CollisionBox);
+    const CollisionBox *second_collider =
+        ecs_get(it->world, second, CollisionBox);
+    assert(first_collider);
+    assert(second_collider);
+    Position *first_pos = ecs_get_mut(it->world, first, Position);
+    const Position *second_pos = ecs_get(it->world, second, Position);
+    assert(first_pos);
+    assert(second_pos);
+
+    Position a_pos = *first_pos;
+    Position b_pos = *second_pos;
+    const Velocity *a_vel = ecs_get(it->world, first, Velocity);
+    if (a_vel != NULL) {
+      a_pos = Vector2Add(a_pos, *a_vel);
+    }
+
+    // TODO: Get collision rectangle and adjust position to not collide.
   }
 }
 
