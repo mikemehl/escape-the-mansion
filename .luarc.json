@@ -8,9 +8,9 @@
   "workspace.library": [
     "${3rd}/love2d/library",
     "./sti",
-    "./concord",
     "./bump.lua",
-    "./vudu"
+    "./ECS.lua",
+        "${3rd}/luaecs/library"
   ],
   "workspace.ignoreDir": [
     "./third-party"

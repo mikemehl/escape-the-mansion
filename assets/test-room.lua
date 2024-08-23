@@ -74,6 +74,38 @@ return {
       tilecount = 4332,
       tiles = {
         {
+          id = 168,
+          objectGroup = {
+            type = "objectgroup",
+            draworder = "index",
+            id = 4,
+            name = "",
+            class = "",
+            visible = true,
+            opacity = 1,
+            offsetx = 0,
+            offsety = 0,
+            parallaxx = 1,
+            parallaxy = 1,
+            properties = {},
+            objects = {
+              {
+                id = 3,
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 1,
+                y = 1,
+                width = 7,
+                height = 7,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
           id = 852,
           objectGroup = {
             type = "objectgroup",
@@ -1988,113 +2020,6 @@ return {
           y = 72,
           width = 0,
           height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        }
-      }
-    },
-    {
-      type = "objectgroup",
-      draworder = "topdown",
-      id = 5,
-      name = "Walls",
-      class = "",
-      visible = true,
-      opacity = 1,
-      offsetx = 0,
-      offsety = 0,
-      parallaxx = 1,
-      parallaxy = 1,
-      properties = {},
-      objects = {
-        {
-          id = 9,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 58,
-          y = 16,
-          width = 4,
-          height = 106,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 10,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 62,
-          y = 122.5,
-          width = 136,
-          height = 13,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 11,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 194,
-          y = 16,
-          width = 4,
-          height = 106.25,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 12,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 62,
-          y = 18,
-          width = 132,
-          height = 14,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 15,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 57.25,
-          y = 22.5,
-          width = 4,
-          height = 290.25,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 17,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 194.75,
-          y = 141.25,
-          width = 3,
-          height = 170.5,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 18,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 62.25,
-          y = 290.75,
-          width = 131.5,
-          height = 20.75,
           rotation = 0,
           visible = true,
           properties = {}

@@ -5,6 +5,11 @@
  </editorsettings>
  <tileset firstgid="1" name="haunted-house" tilewidth="8" tileheight="8" tilecount="4332" columns="76" tilerendersize="grid" fillmode="preserve-aspect-fit">
   <image source="haunted_house/Tileset/HauntedHouseTileset.png" width="608" height="456"/>
+  <tile id="168">
+   <objectgroup draworder="index" id="4">
+    <object id="3" x="1" y="1" width="7" height="7"/>
+   </objectgroup>
+  </tile>
   <tile id="852">
    <objectgroup draworder="index" id="2">
     <object id="1" x="1" y="1" width="7" height="7"/>
@@ -438,14 +443,5 @@
   <object id="1" name="PlayerStart" type="PlayerStart" x="128" y="72">
    <point/>
   </object>
- </objectgroup>
- <objectgroup id="5" name="Walls">
-  <object id="9" x="58" y="16" width="4" height="106"/>
-  <object id="10" x="62" y="122.5" width="136" height="13"/>
-  <object id="11" x="194" y="16" width="4" height="106.25"/>
-  <object id="12" x="62" y="18" width="132" height="14"/>
-  <object id="15" x="57.25" y="22.5" width="4" height="290.25"/>
-  <object id="17" x="194.75" y="141.25" width="3" height="170.5"/>
-  <object id="18" x="62.25" y="290.75" width="131.5" height="20.75"/>
  </objectgroup>
 </map>
