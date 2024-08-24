@@ -5,51 +5,35 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 
 
-local sti = require("sti")
-local bump = require("bump")
+local tiled = require("tiled")
 local ecs = require("tiny")
 local physics = require("physics")
 local render = require("render")
+local input = require("input")
+local player = require("player")
 
 ---@type table
-local map = nil
-local bump_world = nil
 local world = nil
 
 function love.load()
-  ---@type table
-  bump_world = bump.newWorld(4)
-  map = sti("assets/test-room.lua")
-  assert(bump_world)
-  assert(map)
-
-
-  local player_start = {
-    x = map.layers["Points"].objects[1].x,
-    y = map.layers["Points"].objects[1].y,
-  }
-
-  local rect = {}
-  rect = physics.position(rect)
-  rect = render.rectangle(rect)
-  rect.position.x = player_start.x
-  rect.position.y = player_start.y
-
-  world = ecs.world(render.SystemDrawRectangle, rect)
+  tiled:init()
+  world = ecs.world(
+    render.SystemDrawRectangle,
+    render.SystemDrawAnimatedSprite,
+    input.SystemGatherInput,
+    physics.SystemBumpUpdate,
+    player.SystemPlayerUpdate,
+    player:init())
+  ecs.setSystemIndex(world, input.SystemGatherInput, 1)
 end
 
 function love.update(dt)
-  map:update(dt)
-  if love.keyboard.isDown("q") then
-    love.event.quit(0)
-  end
+  tiled:update(dt)
 end
 
 function love.draw()
   love.graphics.clear()
-  map:draw()
+  tiled:draw()
   world:update(1)
   love.graphics.print("HELLO WORLD", 50, 50)
-  local bump_len = bump_world:countItems()
-  love.graphics.print("BUMP ITEMS: " .. tostring(bump_len), 100, 100)
 end
