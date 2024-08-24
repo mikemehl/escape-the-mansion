@@ -9,9 +9,9 @@ ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Velocity);
 ECS_COMPONENT_DECLARE(Facing);
 ECS_COMPONENT_DECLARE(CollisionBox);
+ECS_TAG_DECLARE(CollidingWith);
 ECS_SYSTEM_DECLARE(SystemApplyVelocity);
 ECS_SYSTEM_DECLARE(SystemCollisionDetect);
-ECS_SYSTEM_DECLARE(SystemUpdateCollisionBoxPositions);
 ECS_QUERY_DECLARE(CollisionQuery);
 
 static void SystemApplyVelocity(ecs_iter_t *it) {
@@ -70,6 +70,8 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
                            .height = other_box[j].height};
 
         if (CheckCollisionRecs(test_box_i, test_box_j)) {
+          ecs_add_pair(it->world, ecs_id(CollidingWith), it->entities[i],
+                       other_it.entities[j]);
           vel[i].x *= -1;
           test_box_i.x = pos[i].x + vel[i].x + box[i].x;
           if (CheckCollisionRecs(test_box_i, test_box_j)) {
@@ -104,11 +106,11 @@ static void SystemCollisionResolve(ecs_iter_t *it) {
     Position a_pos = *first_pos;
     Position b_pos = *second_pos;
     const Velocity *a_vel = ecs_get(it->world, first, Velocity);
-    if (a_vel != NULL) {
-      a_pos = Vector2Add(a_pos, *a_vel);
+    if (a_vel == NULL) {
+      continue;
     }
 
-    // TODO: Get collision rectangle and adjust position to not collide.
+    // TODO: Project velocity and resolve collision.
   }
 }
 
@@ -128,6 +130,7 @@ void PhysicsImport(ecs_world_t *world) {
   ECS_COMPONENT_DEFINE(world, Velocity);
   ECS_COMPONENT_DEFINE(world, Facing);
   ECS_COMPONENT_DEFINE(world, CollisionBox);
+  ECS_TAG_DEFINE(world, CollidingWith);
   ECS_SYSTEM_DEFINE(world, SystemApplyVelocity, EcsPreStore, Position,
                     Velocity);
   ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, EcsPostUpdate, Position,
