@@ -5,12 +5,12 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
 end
 
 
-local tiled = require("tiled")
-local ecs = require("tiny")
-local physics = require("physics")
-local render = require("render")
-local input = require("input")
-local player = require("player")
+local tiled = require("src.tiled")
+local ecs = require("lib.tiny")
+local physics = require("src.physics")
+local render = require("src.render")
+local input = require("src.input")
+local player = require("src.player")
 
 ---@type table
 local world = nil

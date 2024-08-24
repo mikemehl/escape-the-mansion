@@ -1,5 +1,5 @@
-local tiny = require("tiny")
-local bump = require("bump")
+local tiny = require("lib.tiny")
+local bump = require("lib.bump")
 
 local M = {
   world = bump.newWorld(4),

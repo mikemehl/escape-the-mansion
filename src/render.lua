@@ -1,4 +1,4 @@
-local ecs = require("tiny")
+local ecs = require("lib.tiny")
 
 local M = {
   SystemDrawRectangle = ecs.processingSystem({ filter = ecs.requireAll("position", "rectangle") }),

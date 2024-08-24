@@ -1,8 +1,8 @@
-local tiled = require("tiled")
-local tiny = require("tiny")
-local physics = require("physics")
-local render = require("render")
-local input = require("input")
+local tiled = require("src.tiled")
+local tiny = require("lib.tiny")
+local physics = require("src.physics")
+local render = require("src.render")
+local input = require("src.input")
 
 
 local M = {

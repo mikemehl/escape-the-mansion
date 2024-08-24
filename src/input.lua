@@ -1,4 +1,4 @@
-local tiny = require("tiny")
+local tiny = require("lib.tiny")
 
 local M = {}
 

@@ -1,4 +1,4 @@
-local sti = require("sti")
+local sti = require("lib.sti")
 
 local M = {
   map = sti("assets/test-room.lua")
