@@ -10,6 +10,10 @@ function M:update()
   self.left = love.keyboard.isDown('a')
   self.down = love.keyboard.isDown('s')
   self.right = love.keyboard.isDown('d')
+
+  if love.keyboard.isDown('q') then
+    love.event.quit(0)
+  end
 end
 
 return M

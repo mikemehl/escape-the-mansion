@@ -6,9 +6,11 @@ end
 
 require("lib.ECS")
 local input = require("src.input")
+local room = require("src.room")
 
 function love.load()
   love.graphics.setDefaultFilter("nearest", "nearest")
+  room:init()
 end
 
 function love.update(dt)
@@ -16,5 +18,6 @@ function love.update(dt)
 end
 
 function love.draw()
+  room:draw()
   love.graphics.print("HELLO WORLD", 50, 50)
 end
