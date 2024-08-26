@@ -1,8 +1,11 @@
 local ecs = require("lib.tiny")
+local anim8 = require("lib.anim8")
+local gamera = require("lib.gamera")
 
 local M = {
   SystemDrawRectangle = ecs.processingSystem({ filter = ecs.requireAll("position", "rectangle") }),
-  SystemDrawAnimatedSprite = ecs.processingSystem({ filter = ecs.requireAll("position", "animatedSprite") })
+  SystemDrawAnimatedSprite = ecs.processingSystem({ filter = ecs.requireAll("position", "animatedSprite") }),
+  camera = gamera.new(0, 0, 640, 480),
 }
 
 function M.rectangle(obj)
@@ -19,13 +22,18 @@ function M.rectangle(obj)
   return obj
 end
 
-function M.animatedSprite(obj, params)
-  obj.animatedSprite = params or {
-    frames = {},
-    durations = {},
-    curr_frame = 1,
-    curr_duration = 0,
-    enabled = false,
+function M.animatedSprite(obj, image_path, gridSize, tileRows, tileColumn)
+  local image = love.graphics.newImage(image_path)
+  assert(image)
+  local grid = anim8.newGrid(gridSize, gridSize, image:getWidth(), image:getHeight())
+  assert(grid)
+  local animation = anim8.newAnimation(grid(tileRows, tileColumn), 1)
+  assert(animation)
+  obj.animatedSprite = {
+    image = image,
+    grid = grid,
+    animation = animation,
+    enabled = true,
   }
   return obj
 end
@@ -42,15 +50,12 @@ function M.SystemDrawAnimatedSprite:process(e, dt)
     return
   end
 
-  e.animatedSprite.curr_duration = e.animatedSprite.curr_duration + dt
-  if e.animatedSprite.curr_duration > e.animatedSprite.durations[e.curr_frame] then
-    e.animatedSprite.curr_frame = e.animatedSprite.curr_frame + 1
-    if e.animatedSprite.curr_frame > #e.animatedSprite.frames then
-      e.animatedSprite.curr_frame = 1
-    end
-  end
+  e.animatedSprite.animation:update(dt)
+  e.animatedSprite.animation:draw(e.animatedSprite.image, e.position.x, e.position.y)
+end
 
-  love.graphics.draw(e.animatedSprite.frames[e.enimatedSprite.curr_frame], e.position.x, e.position.y)
+function M:init()
+  self.camera:setScale(4.0)
 end
 
 return M

@@ -11,7 +11,8 @@ local M = {
   })
 }
 
-function M.SystemPlayerUpdate:process(entity, _)
+function M.SystemPlayerUpdate:process(entity, dt)
+  render.camera:setPosition(entity.position.x, entity.position.y)
   local curr_input = input:get()
   if curr_input.up then
     entity.velocity.y = -1
@@ -28,6 +29,9 @@ function M.SystemPlayerUpdate:process(entity, _)
   else
     entity.velocity.x = 0
   end
+
+  entity.velocity.x = entity.velocity.x * dt
+  entity.velocity.y = entity.velocity.y * dt
 end
 
 function M.player(obj)
@@ -35,7 +39,7 @@ function M.player(obj)
   player_obj = physics.position(player_obj)
   player_obj = physics.velocity(player_obj)
   player_obj = physics.collisionBox(player_obj, { x_off = 0, y_off = 0, width = 20, height = 20 })
-  player_obj = render.rectangle(player_obj)
+  player_obj = render.animatedSprite(player_obj, 'assets/characters/HumanTownsfolkWalk.png', 32, '1-4', 1)
   player_obj.position.x = tiled.player_start.x
   player_obj.position.y = tiled.player_start.y
   player_obj.player = true

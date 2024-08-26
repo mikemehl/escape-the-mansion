@@ -16,7 +16,9 @@ local player = require("src.player")
 local world = nil
 
 function love.load()
+  love.graphics.setDefaultFilter("nearest", "nearest")
   tiled:init()
+  render:init()
   world = ecs.world(
     render.SystemDrawRectangle,
     render.SystemDrawAnimatedSprite,
@@ -33,7 +35,9 @@ end
 
 function love.draw()
   love.graphics.clear()
-  tiled:draw()
-  world:update(1)
+  render.camera:draw(function()
+    tiled:draw()
+    world:update(1)
+  end)
   love.graphics.print("HELLO WORLD", 50, 50)
 end
