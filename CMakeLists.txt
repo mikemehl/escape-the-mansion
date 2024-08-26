@@ -32,7 +32,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/tsoding/arena
   GIT_TAG c2d1c1ce4360d13d5fb94201bfb72cc34a22fa69)
 
-FetchContent_MakeAvailable(raylib flecs libtmx arena)
+FetchContent_MakeAvailable(raylib flecs libtmx arena )
 
 add_executable(
   escape-the-mansion
@@ -56,7 +56,8 @@ target_link_libraries(escape-the-mansion
   PUBLIC
   flecs_static
   raylib
-  tmx)
+  tmx
+)
 
 set_target_properties(escape-the-mansion
   PROPERTIES
@@ -66,3 +67,4 @@ set_target_properties(escape-the-mansion
   C_CPPCHECK "cppcheck"
   C_CLANG_TIDY "clang-tidy;--use-color"
 )
+

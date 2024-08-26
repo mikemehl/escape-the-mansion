@@ -9,9 +9,10 @@ ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Velocity);
 ECS_COMPONENT_DECLARE(Facing);
 ECS_COMPONENT_DECLARE(CollisionBox);
-ECS_TAG_DECLARE(CollidingWith);
+ECS_COMPONENT_DECLARE(CollidingWith);
 ECS_SYSTEM_DECLARE(SystemApplyVelocity);
 ECS_SYSTEM_DECLARE(SystemCollisionDetect);
+ECS_SYSTEM_DECLARE(SystemCollisionResolve);
 ECS_QUERY_DECLARE(CollisionQuery);
 
 static void SystemApplyVelocity(ecs_iter_t *it) {
@@ -70,14 +71,10 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
                            .height = other_box[j].height};
 
         if (CheckCollisionRecs(test_box_i, test_box_j)) {
-          ecs_add_pair(it->world, ecs_id(CollidingWith), it->entities[i],
-                       other_it.entities[j]);
-          vel[i].x *= -1;
-          test_box_i.x = pos[i].x + vel[i].x + box[i].x;
-          if (CheckCollisionRecs(test_box_i, test_box_j)) {
-            vel[i].y *= -1;
-            test_box_i.y = pos[i].y + vel[i].y + box[i].y;
-          }
+          TraceLog(LOG_INFO, "ADDING THE COLLISION MUAHAHAHA");
+          CollidingWith collision = GetCollisionRec(test_box_i, test_box_j);
+          ecs_set_id(it->world, it->entities[i], ecs_id(CollidingWith),
+                     sizeof(CollidingWith), &collision);
         }
       }
     }
@@ -86,31 +83,36 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
 }
 
 static void SystemCollisionResolve(ecs_iter_t *it) {
+  CollidingWith *collisions = ecs_field(it, CollidingWith, 0);
   for (int i = 0; i < it->count; i++) {
-    ecs_entity_t pair = it->entities[i];
-    ecs_entity_t first = ecs_pair_first(it->world, pair);
-    ecs_entity_t second = ecs_pair_second(it->world, pair);
-    assert(first > 0);
-    assert(second > 0);
-    const CollisionBox *first_collider =
-        ecs_get(it->world, first, CollisionBox);
-    const CollisionBox *second_collider =
-        ecs_get(it->world, second, CollisionBox);
-    assert(first_collider);
-    assert(second_collider);
-    Position *first_pos = ecs_get_mut(it->world, first, Position);
-    const Position *second_pos = ecs_get(it->world, second, Position);
-    assert(first_pos);
-    assert(second_pos);
-
-    Position a_pos = *first_pos;
-    Position b_pos = *second_pos;
-    const Velocity *a_vel = ecs_get(it->world, first, Velocity);
-    if (a_vel == NULL) {
+    if (!ecs_has(it->world, it->entities[i], Velocity)) {
+      ecs_remove(it->world, it->entities[i], CollidingWith);
       continue;
     }
 
-    // TODO: Project velocity and resolve collision.
+    const Position *pos = ecs_get(it->world, it->entities[i], Position);
+    Velocity *vel = ecs_get_mut(it->world, it->entities[i], Velocity);
+    const CollisionBox *box = ecs_get(it->world, it->entities[i], CollisionBox);
+    assert(pos);
+    assert(vel);
+    assert(box);
+
+    Vector2 box_center = (Vector2){.x = pos->x + box->x + box->width / 2,
+                                   .y = pos->y + box->y + box->height / 2};
+    Vector2 collision_center =
+        (Vector2){.x = collisions[i].x + collisions[i].width / 2,
+                  .y = collisions[i].y + collisions[i].height / 2};
+    float center_distance = Vector2Distance(box_center, collision_center);
+    Vector2 collision_direction = Vector2Subtract(collision_center, box_center);
+    collision_direction = Vector2Normalize(collision_direction);
+    Vector2 collision_force =
+        Vector2Scale(collision_direction, center_distance);
+
+    float velocity_magnitude = Vector2Length(*vel);
+    *vel = Vector2Add(*vel, collision_force);
+    *vel = Vector2Normalize(*vel);
+    *vel = Vector2Scale(*vel, -1 * velocity_magnitude);
+    ecs_remove(it->world, it->entities[i], CollidingWith);
   }
 }
 
@@ -118,22 +120,27 @@ void PhysicsImport(ecs_world_t *world) {
   ECS_MODULE(world, Physics);
 
   // phases
-  ecs_entity_t PhysicsCollision = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t PhysicsCollisionDetect = ecs_new_w_id(world, EcsPhase);
+  ecs_entity_t PhysicsCollisionResolve = ecs_new_w_id(world, EcsPhase);
   ecs_entity_t PhysicsApply = ecs_new_w_id(world, EcsPhase);
   ecs_entity_t PhysicsCleanup = ecs_new_w_id(world, EcsPhase);
 
-  ecs_add_pair(world, PhysicsCollision, EcsDependsOn, EcsOnUpdate);
-  ecs_add_pair(world, PhysicsApply, EcsDependsOn, PhysicsCollision);
+  ecs_add_pair(world, PhysicsCollisionDetect, EcsDependsOn, EcsOnUpdate);
+  ecs_add_pair(world, PhysicsCollisionResolve, EcsDependsOn,
+               PhysicsCollisionDetect);
+  ecs_add_pair(world, PhysicsApply, EcsDependsOn, PhysicsCollisionResolve);
   ecs_add_pair(world, PhysicsCleanup, EcsDependsOn, PhysicsApply);
 
   ECS_COMPONENT_DEFINE(world, Position);
   ECS_COMPONENT_DEFINE(world, Velocity);
   ECS_COMPONENT_DEFINE(world, Facing);
   ECS_COMPONENT_DEFINE(world, CollisionBox);
-  ECS_TAG_DEFINE(world, CollidingWith);
-  ECS_SYSTEM_DEFINE(world, SystemApplyVelocity, EcsPreStore, Position,
-                    Velocity);
-  ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, EcsPostUpdate, Position,
-                    Velocity, CollisionBox);
+  ECS_COMPONENT_DEFINE(world, CollidingWith);
+  ECS_SYSTEM_DEFINE(world, SystemApplyVelocity, PhysicsApply,
+                    Position, [in] Velocity);
+  ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, PhysicsCollisionDetect,
+                    Position, Velocity, CollisionBox);
+  ECS_SYSTEM_DEFINE(world, SystemCollisionResolve, PhysicsCollisionResolve,
+                    CollidingWith, [out] Velocity);
   ECS_QUERY_DEFINE(world, CollisionQuery, CollisionBox);
 }
