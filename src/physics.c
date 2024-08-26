@@ -71,10 +71,9 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
                            .height = other_box[j].height};
 
         if (CheckCollisionRecs(test_box_i, test_box_j)) {
-          TraceLog(LOG_INFO, "ADDING THE COLLISION MUAHAHAHA");
           CollidingWith collision = GetCollisionRec(test_box_i, test_box_j);
-          ecs_set_id(it->world, it->entities[i], ecs_id(CollidingWith),
-                     sizeof(CollidingWith), &collision);
+          ecs_add_pair(it->world, it->entities[i], ecs_id(CollidingWith),
+                       other_it.entities[j]);
         }
       }
     }
@@ -85,6 +84,8 @@ static void SystemCollisionDetect(ecs_iter_t *it) {
 static void SystemCollisionResolve(ecs_iter_t *it) {
   CollidingWith *collisions = ecs_field(it, CollidingWith, 0);
   for (int i = 0; i < it->count; i++) {
+    ecs_entity_t pair = ecs_field_id(it, i);
+    ecs_entity_t target = ecs_pair_second(it->world, pair);
     if (!ecs_has(it->world, it->entities[i], Velocity)) {
       ecs_remove(it->world, it->entities[i], CollidingWith);
       continue;
@@ -112,7 +113,8 @@ static void SystemCollisionResolve(ecs_iter_t *it) {
     *vel = Vector2Add(*vel, collision_force);
     *vel = Vector2Normalize(*vel);
     *vel = Vector2Scale(*vel, -1 * velocity_magnitude);
-    ecs_remove(it->world, it->entities[i], CollidingWith);
+    /* ecs_remove_id(it->world, it->entities[i], pair); */
+    ecs_remove_pair(it->world, it->entities[i], ecs_id(CollidingWith), target);
   }
 }
 
@@ -141,6 +143,6 @@ void PhysicsImport(ecs_world_t *world) {
   ECS_SYSTEM_DEFINE(world, SystemCollisionDetect, PhysicsCollisionDetect,
                     Position, Velocity, CollisionBox);
   ECS_SYSTEM_DEFINE(world, SystemCollisionResolve, PhysicsCollisionResolve,
-                    CollidingWith, [out] Velocity);
+                    (CollidingWith, *), [out] Velocity);
   ECS_QUERY_DEFINE(world, CollisionQuery, CollisionBox);
 }
