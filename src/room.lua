@@ -1,6 +1,4 @@
 ---@class Room
----@field init function(self: Room): nil
----@field draw function(self: Room): nil
 ---@field raw Tiled
 ---@field image love.Image
 ---@field quads love.Quad[]

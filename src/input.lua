@@ -1,5 +1,4 @@
 ---@class Input
----@field update function(self: Room): nil
 ---@field up boolean
 ---@field down boolean
 ---@field right boolean
