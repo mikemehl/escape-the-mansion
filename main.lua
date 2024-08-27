@@ -11,6 +11,7 @@ local player = require('src.player')
 local render = require('src.render')
 local room = require('src.room')
 
+local camera = require('src.camera')
 local world = World()
 
 function love.load()
@@ -18,6 +19,7 @@ function love.load()
     room:init()
     player.init(world)
     render.init(world)
+    camera.init(world)
 end
 
 function love.update(dt)
@@ -26,7 +28,9 @@ function love.update(dt)
 end
 
 function love.draw()
-    room:draw()
-    world:emit('draw')
+    camera:draw(function(l, t, w, h)
+        room:draw()
+        world:emit('draw')
+    end)
     love.graphics.print('HELLO WORLD', 50, 50)
 end

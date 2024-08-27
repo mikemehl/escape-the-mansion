@@ -23,7 +23,11 @@ function M.UpdatePlayer:update(dt)
 end
 
 function M.init(world)
-    Entity(world):give('position', 50, 50):give('rectangleSprite', {}):give('player')
+    local sprite = love.graphics.newImage('assets/characters/HumanTownsfolkIdle.png')
+    Entity(world)
+        :give('position', 50, 50)
+        :give('player')
+        :give('animatedSprite', 32, 32, sprite, '1-4', 1, 0.1)
     world:addSystem(M.UpdatePlayer)
 end
 

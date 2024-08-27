@@ -49,7 +49,7 @@ end
 M.AnimatedSpritesSystem = System({ pool = { 'animatedSprite' } })
 function M.AnimatedSpritesSystem:update(dt)
     for _, e in ipairs(self.pool) do
-        e.animatedSprite:update(dt)
+        e.animatedSprite.anim:update(dt)
     end
 end
 
