@@ -1,31 +1,23 @@
 ---@class Render
 local M = {}
 
-local Position = require("src.physics").Position
+require("src.physics")
 
----@class RectangleSprite
----@field rect Rectangle
----@field color Color
----@type fun(RectangleSprite): RectangleSprite
-local RectangleSprite = ECS.Component(function(params)
-  return {
-    rect = params.rectangle or { x = 0, y = 0, width = 0, height = 0 },
-    color = params.color or { red = 0, green = 0, blue = 0, alpha = 1 }
-  }
+Component("rectangleSprite", function(c, params)
+  c.rect = params.rectangle or { x = 0, y = 0, width = 100, height = 60 }
+  c.color = params.color or { r = 0, g = 255, b = 0, a = 1 }
 end)
 
-M.RectangleSprite = RectangleSprite
-
-M.DrawRectangleSprite = ECS.System("render", ECS.Query.All({ Position, RectangleSprite }), function(self, _)
-  for _, e in self:Result():Iterator() do
-    local pos = e:Get(Position) ---@type Position
-    local rect = e:Get(RectangleSprite) ---@type RectangleSprite
+M.DrawRectangleSprite = System({ pool = { "rectangleSprite", "position" } })
+function M.DrawRectangleSprite:draw()
+  for _, e in ipairs(self.pool) do
     local r, g, b, a = love.graphics.getColor()
-    love.graphics.setColor(rect.color.red, rect.color.green, rect.color.blue, rect.color.alpha)
-    love.graphics.rectangle("fill", rect.rect.x, rect.rect.y, rect.rect.width, rect.rect.height)
+    love.graphics.setColor(e.rectangleSprite.color.r, e.rectangleSprite.color.g, e.rectangleSprite.color.b,
+      e.rectangleSprite.color.a)
+    love.graphics.rectangle("fill", e.position.x, e.position.y, e.rectangleSprite.rect.width,
+      e.rectangleSprite.rect.height)
     love.graphics.setColor(r, g, b, a)
   end
-end)
-
+end
 
 return M

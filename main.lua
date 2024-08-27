@@ -10,23 +10,22 @@ local render = require("src.render")
 local room = require("src.room")
 local player = require("src.player")
 
-local world = World({
-  render.DrawRectangleSprite,
-}, nil, false)
+local world = World()
 
 function love.load()
   love.graphics.setDefaultFilter("nearest", "nearest")
   room:init()
-  player.init(world)
+  world = player.init(world)
+  world:addSystems(render.DrawRectangleSprite)
 end
 
 function love.update(dt)
   input:update()
-  world:Update("process", dt)
+  world:emit("update")
 end
 
 function love.draw()
   room:draw()
-  world:Update("render", os.clock())
+  world:emit("draw")
   love.graphics.print("HELLO WORLD", 50, 50)
 end

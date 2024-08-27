@@ -6,25 +6,25 @@
 --]]
 
 if not _G.Component then
-  _G.Component = require("concord").component
+  _G.Component = require("lib.concord").component
 end
 
 if not _G.Components then
-  _G.Components = require("concord").components
+  _G.Components = require("lib.concord").components
 end
 
 if not _G.System then
-  _G.System = require("concord").system
+  _G.System = require("lib.concord").system
 end
 
 if not _G.Entity then
-  _G.Entity = require("concord").entity
+  _G.Entity = require("lib.concord").entity
 end
 
 if not _G.World then
-  _G.World = require("concord").world
+  _G.World = require("lib.concord").world
 end
 
 if not _G.Utils then
-  _G.Utils = require("concord").utils
+  _G.Utils = require("lib.concord").utils
 end
