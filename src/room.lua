@@ -1,8 +1,12 @@
----@module 'room'
-local M = {
-  ---@type Tiled
-  raw = require('assets.test-room')
-}
+---@class Room
+---@field init function(self: Room): nil
+---@field draw function(self: Room): nil
+---@field raw Tiled
+---@field image love.Image
+---@field quads love.Quad[]
+---@field spriteBatch love.SpriteBatch?
+---@field walls Rectangle[]
+local M = {}
 
 ---@param data Tiled
 ---@return love.Quad[]
@@ -65,14 +69,15 @@ local function loadWalls(data)
 end
 
 function M:init()
+  self.raw = require('assets.test-room')
   self.image = love.graphics.newImage("assets/haunted_house/Tileset/HauntedHouseTileset.png")
   self.quads = getTileQuads(self.raw)
   self.spriteBatch = setupSpriteBatch(self.raw, self.image, self.quads)
+  self.walls = loadWalls(self.raw)
 end
 
 function M:draw()
   love.graphics.draw(self.spriteBatch)
 end
 
----@type Room
 return M

@@ -105,17 +105,4 @@
 ---@field layers Layer[]
 
 ---@alias Rectangle {x: number, y: number, width: number, height: number}
-
----@class Room
----@field raw Tiled
----@field image love.Image
----@field quads love.Quad[]
----@field spriteBatch love.SpriteBatch
----@field walls Rectangle[]
-
-
----@class Input
----@field up boolean
----@field down boolean
----@field right boolean
----@field left boolean
+---@alias Vector2 {x: number, y: number}
