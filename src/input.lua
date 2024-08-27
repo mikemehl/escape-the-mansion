@@ -1,9 +1,4 @@
 ---@module 'input'
----@class Input
----@field up boolean
----@field down boolean
----@field right boolean
----@field left boolean
 local M = {
   up = false,
   down = false,

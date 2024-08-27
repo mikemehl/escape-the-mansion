@@ -1,14 +1,8 @@
 ---@module 'room'
----@class Room
----@field raw Tiled
----@field image love.Image
----@field quads love.Quad[]
----@field spriteBatch love.SpriteBatch
 local M = {
   ---@type Tiled
   raw = require('assets.test-room')
 }
-
 
 ---@param data Tiled
 ---@return love.Quad[]
@@ -51,7 +45,23 @@ local function setupSpriteBatch(data, image, quads)
 end
 
 ---@param data Tiled
+---@return Rectangle[]
 local function loadWalls(data)
+  local walls = {}
+  for _, layer in pairs(data.layers) do
+    if layer.name == "WallObjs" then
+      for _, obj in pairs(layer.objects) do
+        local wall = {
+          x = obj.x,
+          y = obj.y,
+          width = obj.width,
+          height = obj.height,
+        }
+        table.insert(walls, wall)
+      end
+    end
+  end
+  return walls
 end
 
 function M:init()
