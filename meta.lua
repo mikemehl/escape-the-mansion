@@ -8,7 +8,6 @@
 ---@alias Vector2 {x: number, y: number}
 ---@alias Color {red: number, green: number, blue: number, alpoha: number}
 
-
 --[[
     Tiled Export Definitions
 --]]
