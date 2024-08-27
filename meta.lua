@@ -1,5 +1,17 @@
 ---@meta
 
+--[[
+    Auxillary Definitions
+--]]
+
+---@alias Rectangle {x: number, y: number, width: number, height: number}
+---@alias Vector2 {x: number, y: number}
+---@alias Color {red: number, green: number, blue: number, alpoha: number}
+
+
+--[[
+    Tiled Export Definitions
+--]]
 ---@class WangTile
 ---@field wangid number[]
 ---@field tileid number
@@ -104,5 +116,6 @@
 ---@field tilesets Tileset[]
 ---@field layers Layer[]
 
----@alias Rectangle {x: number, y: number, width: number, height: number}
----@alias Vector2 {x: number, y: number}
+--[[
+    ECS Definitions
+--]]
