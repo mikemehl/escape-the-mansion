@@ -1,8 +1,17 @@
+---@module 'room'
+---@class Room
+---@field raw Tiled
+---@field image love.Image
+---@field quads love.Quad[]
+---@field spriteBatch love.SpriteBatch
 local M = {
+  ---@type Tiled
   raw = require('assets.test-room')
 }
 
 
+---@param data Tiled
+---@return love.Quad[]
 local function getTileQuads(data)
   local tileQuads = {}
   for _, tileset in pairs(data.tilesets) do
@@ -20,6 +29,10 @@ local function getTileQuads(data)
   return tileQuads
 end
 
+---@param data Tiled
+---@param image love.Image
+---@param quads love.Quad[]
+---@return love.SpriteBatch
 local function setupSpriteBatch(data, image, quads)
   local spriteBatch = love.graphics.newSpriteBatch(image, 5000)
   for _, layer in pairs(data.layers) do
@@ -37,7 +50,8 @@ local function setupSpriteBatch(data, image, quads)
   return spriteBatch
 end
 
-local function setupWalls(data)
+---@param data Tiled
+local function loadWalls(data)
 end
 
 function M:init()
@@ -50,4 +64,5 @@ function M:draw()
   love.graphics.draw(self.spriteBatch)
 end
 
+---@type Room
 return M

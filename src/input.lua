@@ -1,3 +1,9 @@
+---@module 'input'
+---@class Input
+---@field up boolean
+---@field down boolean
+---@field right boolean
+---@field left boolean
 local M = {
   up = false,
   down = false,
@@ -16,4 +22,5 @@ function M:update()
   end
 end
 
+---@type Input
 return M
