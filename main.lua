@@ -16,13 +16,13 @@ local world = World()
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
     room:init()
-    world = player.init(world)
-    world:addSystems(render.DrawRectangleSprite)
+    player.init(world)
+    render.init(world)
 end
 
 function love.update(dt)
     input:update()
-    world:emit('update')
+    world:emit('update', dt)
 end
 
 function love.draw()
