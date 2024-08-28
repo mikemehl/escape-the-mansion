@@ -5,6 +5,8 @@ if os.getenv('LOCAL_LUA_DEBUGGER_VSCODE') == '1' then
     require('lldebugger').start()
 end
 
+love.graphics.setDefaultFilter('nearest', 'nearest')
+
 require('src.globals')
 local input = require('src.input')
 local player = require('src.player')
@@ -15,7 +17,6 @@ local camera = require('src.camera')
 local world = World()
 
 function love.load()
-    love.graphics.setDefaultFilter('nearest', 'nearest')
     room:init()
     player.init(world)
     render.init(world)

@@ -9,7 +9,7 @@ Component('rectangleSprite', function(c, params)
     c.color = params.color or { r = 0, g = 255, b = 0, a = 1 }
 end)
 
-Component(
+M.animatedSprite = Component(
     'animatedSprite',
     ---@param c table
     ---@param width number
