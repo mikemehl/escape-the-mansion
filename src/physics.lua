@@ -18,4 +18,15 @@ Component('collisionBox', function(c, x, y, w, h)
     c.h = h or 0
 end)
 
+M.ApplyVelocity = System({ pool = { 'position', 'velocity' } })
+
+function M.ApplyVelocity:update(dt)
+    for _, e in ipairs(self.pool) do
+        e.position.x = e.position.x + e.velocity.x
+        e.position.y = e.position.y + e.velocity.y
+    end
+end
+
+function M.init(world) world:addSystem(M.ApplyVelocity) end
+
 return M
