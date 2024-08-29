@@ -9,6 +9,13 @@ Component('rectangleSprite', function(c, params)
     c.color = params.color or { r = 0, g = 255, b = 0, a = 1 }
 end)
 
+local shader = love.graphics.newShader([[
+  vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ) {
+    vec4 pixel = Texel(texture, texture_coords);
+    return pixel * color;
+  }
+]])
+
 M.animatedSprite = Component(
     'animatedSprite',
     ---@param c table
@@ -63,6 +70,9 @@ function M.AnimatedSpritesSystem:draw()
     end
 end
 
-function M.init(world) world:addSystem(M.DrawRectangleSprite):addSystem(M.AnimatedSpritesSystem) end
+function M.init(world)
+    love.graphics.setShader(shader)
+    world:addSystem(M.DrawRectangleSprite):addSystem(M.AnimatedSpritesSystem)
+end
 
 return M
