@@ -18,7 +18,7 @@ local camera = require('src.camera')
 local world = World()
 
 function love.load()
-    room:init()
+    room:init(world)
     physics.init(world)
     player.init(world)
     render.init(world)

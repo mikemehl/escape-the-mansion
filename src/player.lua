@@ -3,49 +3,37 @@ local M = {}
 
 local PLAYER_SPEED = 100
 
+local anim8 = require('lib.anim8')
 local input = require('src.input')
 local render = require('src.render')
 
+local idleSpriteSheet = love.graphics.newImage('assets/characters/HumanTownsfolkIdle.png')
+local idleSpriteGrid =
+    anim8.newGrid(32, 32, idleSpriteSheet:getWidth(), idleSpriteSheet:getHeight())
+local walkingSpriteSheet = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png')
+local walkingSpriteGrid =
+    anim8.newGrid(32, 32, walkingSpriteSheet:getWidth(), idleSpriteSheet:getHeight())
+
 local sprites = {
     idle = {
-        gx = 32,
-        gy = 32,
-        image = love.graphics.newImage('assets/characters/HumanTownsfolkIdle.png'),
-        xframes = '1-4',
-        yframes = 1,
-        duration = 0.1,
+        anim = anim8.newAnimation(idleSpriteGrid('1-4', 1), 0.1),
+        image = idleSpriteSheet,
     },
     walkingrf = {
-        gx = 32,
-        gy = 32,
-        image = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png'),
-        xframes = '1-4',
-        yframes = 1,
-        duration = 0.1,
+        anim = anim8.newAnimation(walkingSpriteGrid('1-4', 1), 0.1),
+        image = walkingSpriteSheet,
     },
     walkinglf = {
-        gx = 32,
-        gy = 32,
-        image = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png'),
-        xframes = '1-4',
-        yframes = 2,
-        duration = 0.1,
+        anim = anim8.newAnimation(walkingSpriteGrid('1-4', 2), 0.1),
+        image = walkingSpriteSheet,
     },
     walkingrb = {
-        gx = 32,
-        gy = 32,
-        image = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png'),
-        xframes = '1-4',
-        yframes = 3,
-        duration = 0.1,
+        anim = anim8.newAnimation(walkingSpriteGrid('1-4', 3), 0.1),
+        image = walkingSpriteSheet,
     },
     walkinglb = {
-        gx = 32,
-        gy = 32,
-        image = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png'),
-        xframes = '1-4',
-        yframes = 4,
-        duration = 0.1,
+        anim = anim8.newAnimation(walkingSpriteGrid('1-4', 4), 0.1),
+        image = walkingSpriteSheet,
     },
 }
 
@@ -72,15 +60,7 @@ local function setSprite(entity, sprite)
     if entity:has('animatedSprite') then entity:remove('animatedSprite') end
     local sprite_spec = sprites[sprite]
     assert(sprite_spec)
-    entity = entity:give(
-        'animatedSprite',
-        sprite_spec.gx,
-        sprite_spec.gy,
-        sprite_spec.image,
-        sprite_spec.xframes,
-        sprite_spec.yframes,
-        sprite_spec.duration
-    )
+    entity = entity:give('animatedSprite', sprite_spec.anim, sprite_spec.image)
     return entity
 end
 

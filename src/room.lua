@@ -71,12 +71,18 @@ local function loadWalls(data)
     return walls
 end
 
-function M:init()
+function M:init(world)
     self.raw = require('assets.test-room')
     self.image = love.graphics.newImage('assets/haunted_house/Tileset/HauntedHouseTileset.png')
     self.quads = getTileQuads(self.raw)
     self.spriteBatch = setupSpriteBatch(self.raw, self.image, self.quads)
     self.walls = loadWalls(self.raw)
+    for _, wall in ipairs(self.walls) do
+        world
+            :newEntity()
+            :give('position', wall.x, wall.y)
+            :give('collisionBox', 0, 0, wall.width, wall.height)
+    end
 end
 
 function M:draw() love.graphics.draw(self.spriteBatch) end

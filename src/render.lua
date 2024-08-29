@@ -12,16 +12,10 @@ end)
 M.animatedSprite = Component(
     'animatedSprite',
     ---@param c table
-    ---@param width number
-    ---@param height number
-    ---@param image love.Image
-    ---@param frames_x string
-    ---@param frames_y string
-    ---@param durations number | [number]
-    function(c, width, height, image, frames_x, frames_y, durations)
+    ---@param anim table
+    function(c, anim, image)
+        c.anim = anim
         c.image = image
-        c.grid = anim8.newGrid(width, height, image:getWidth(), image:getHeight())
-        c.anim = anim8.newAnimation(c.grid(frames_x, frames_y), durations)
     end
 )
 
