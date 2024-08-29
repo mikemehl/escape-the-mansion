@@ -86,7 +86,7 @@ function M:init(world)
         world
             :newEntity()
             :give('position', wall.x, wall.y)
-            :give('collisionBox', 0, 0, wall.width, wall.height)
+            :give('collisionBox', wall.x, wall.y, wall.width, wall.height)
     end
 end
 

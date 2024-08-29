@@ -111,7 +111,11 @@ function M.UpdatePlayerSprite:update(_)
 end
 
 function M.init(world)
-    local player = Entity(world):give('position', 50, 50):give('velocity', 0, 0):give('player')
+    local player = Entity(world)
+        :give('position', 70, 70)
+        :give('velocity', 0, 0)
+        :give('player')
+        :give('collisionBox', 70 + 8, 70 + 8, 8, 8)
     player = setSprite(player, 'idle')
     world:addSystem(M.UpdatePlayer)
     world:addSystem(M.UpdatePlayerSprite)

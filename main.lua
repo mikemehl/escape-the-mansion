@@ -35,6 +35,7 @@ function love.draw()
     camera:draw(function(l, t, w, h)
         room:draw()
         world:emit('draw')
+        physics:draw()
     end)
     love.graphics.print('HELLO WORLD', 50, 50)
 end

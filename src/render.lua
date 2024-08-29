@@ -13,9 +13,13 @@ M.animatedSprite = Component(
     'animatedSprite',
     ---@param c table
     ---@param anim table
-    function(c, anim, image)
+    ---@param xoff number
+    ---@param yoff number
+    function(c, anim, image, xoff, yoff)
         c.anim = anim
         c.image = image
+        c.xoff = xoff or 12
+        c.yoff = yoff or 12
     end
 )
 
@@ -50,7 +54,11 @@ end
 function M.AnimatedSpritesSystem:draw()
     for _, e in ipairs(self.pool) do
         if e.position then
-            e.animatedSprite.anim:draw(e.animatedSprite.image, e.position.x, e.position.y)
+            e.animatedSprite.anim:draw(
+                e.animatedSprite.image,
+                e.position.x - e.animatedSprite.xoff,
+                e.position.y - e.animatedSprite.yoff
+            )
         end
     end
 end
