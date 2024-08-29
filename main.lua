@@ -13,9 +13,10 @@ local room = require('src.room')
 local input = require('src.input')
 local physics = require('src.physics')
 local player = require('src.player')
-local render = require('src.render')
 
 local camera = require('src.camera')
+local render = require('src.render')
+
 local world = World()
 
 function love.load()
@@ -37,5 +38,5 @@ function love.draw()
         world:emit('draw')
         physics:draw()
     end)
-    love.graphics.print('HELLO WORLD', 50, 50)
+    -- love.graphics.print('HELLO WORLD', 50, 50)
 end

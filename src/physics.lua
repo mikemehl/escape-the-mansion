@@ -18,7 +18,6 @@ end)
 Component('collisionBox', function(c, x, y, w, h) bumpWorld:add(c, x, y, w, h) end)
 
 M.ApplyVelocity = System({ pool = { 'position', 'velocity' } })
-
 function M.ApplyVelocity:update(dt)
     for _, e in ipairs(self.pool) do
         e.position.x = e.position.x + e.velocity.x
@@ -28,6 +27,18 @@ function M.ApplyVelocity:update(dt)
                 bumpWorld:move(e.collisionBox, e.position.x, e.position.y)
         end
     end
+end
+
+M.DebugPositions = System({ pool = { 'position' } })
+function M.DebugPositions:draw()
+    if not DEBUG_PHYSICS then return end
+    local r, g, b, a = love.graphics.getColor()
+    love.graphics.setColor(0, 0, 1, 1)
+    for _, e in ipairs(self.pool) do
+        love.graphics.line(e.position.x - 4, e.position.y, e.position.x + 4, e.position.y)
+        love.graphics.line(e.position.x, e.position.y - 4, e.position.x, e.position.y + 4)
+    end
+    love.graphics.setColor(r, g, b, a)
 end
 
 function M:draw()
@@ -42,6 +53,6 @@ function M:draw()
     end
 end
 
-function M.init(world) world:addSystem(M.ApplyVelocity) end
+function M.init(world) world:addSystem(M.ApplyVelocity):addSystem(M.DebugPositions) end
 
 return M

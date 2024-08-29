@@ -2,21 +2,28 @@
 local M = {}
 
 require('src.physics')
-local anim8 = require('lib.anim8')
-
-Component('rectangleSprite', function(c, params)
-    c.rect = params.rectangle or { x = 0, y = 0, width = 100, height = 60 }
-    c.color = params.color or { r = 0, g = 255, b = 0, a = 1 }
-end)
 
 local shader = love.graphics.newShader([[
+  uniform vec2 screenSize;
+  uniform vec2 spotlight;
   vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ) {
     vec4 pixel = Texel(texture, texture_coords);
-    return pixel * color;
+    float maxMag = distance(vec2(0, 0), screenSize)*0.5;
+    float distFromSpotlight = distance(screen_coords, spotlight);
+    float colorScale = distFromSpotlight / maxMag;
+    if (colorScale > 1.0) {
+      colorScale = 1;
+    }
+    return vec4(pixel.rgb * 1-colorScale, pixel.a) * color;
   }
 ]])
 
-M.animatedSprite = Component(
+Component('rectangleSprite', function(c, params)
+    c.rect = params.rectangle or { x = 0, y = 0, width = 100, height = 60 }
+    c.color = params.color or { r = 0, g = 1, b = 0, a = 1 }
+end)
+
+Component(
     'animatedSprite',
     ---@param c table
     ---@param anim table
@@ -29,6 +36,8 @@ M.animatedSprite = Component(
         c.yoff = yoff or 12
     end
 )
+
+Component('spotlightTarget')
 
 M.DrawRectangleSprite = System({ pool = { 'rectangleSprite', 'position' } })
 function M.DrawRectangleSprite:draw()
@@ -58,6 +67,17 @@ function M.AnimatedSpritesSystem:update(dt)
     end
 end
 
+M.SpotlightTargetSystem = System({ pool = { 'spotlightTarget', 'position' } })
+function M.SpotlightTargetSystem:update(_)
+    local camera = require('src.camera')
+    local _, _, w, h = camera:getScreenSize()
+    shader:send('screenSize', { w, h })
+    for _, e in ipairs(self.pool) do
+        local x, y = camera:toScreen(e.position.x, e.position.y)
+        shader:send('spotlight', { x, y })
+    end
+end
+
 function M.AnimatedSpritesSystem:draw()
     for _, e in ipairs(self.pool) do
         if e.position then
@@ -72,7 +92,10 @@ end
 
 function M.init(world)
     love.graphics.setShader(shader)
-    world:addSystem(M.DrawRectangleSprite):addSystem(M.AnimatedSpritesSystem)
+    world
+        :addSystem(M.DrawRectangleSprite)
+        :addSystem(M.AnimatedSpritesSystem)
+        :addSystem(M.SpotlightTargetSystem)
 end
 
 return M
