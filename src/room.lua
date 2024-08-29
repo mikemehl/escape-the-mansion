@@ -1,10 +1,17 @@
 ---@class Room
 ---@field raw Tiled
----@field image love.Image
+---@field tilesheetImage love.Image
+---@field characterIdleImage love.Image
+---@field characterWalkImage love.Image
 ---@field quads love.Quad[]
 ---@field spriteBatch love.SpriteBatch?
 ---@field walls Rectangle[]
-local M = {}
+local M = {
+    raw = require('assets.test-room'),
+    tilesheetImage = love.graphics.newImage('assets/haunted_house/Tileset/HauntedHouseTileset.png'),
+    characterIdleImage = love.graphics.newImage('assets/characters/HumanTownsfolkIdle.png'),
+    characterWalkImage = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png'),
+}
 
 ---@param data Tiled
 ---@return love.Quad[]
@@ -72,10 +79,8 @@ local function loadWalls(data)
 end
 
 function M:init(world)
-    self.raw = require('assets.test-room')
-    self.image = love.graphics.newImage('assets/haunted_house/Tileset/HauntedHouseTileset.png')
     self.quads = getTileQuads(self.raw)
-    self.spriteBatch = setupSpriteBatch(self.raw, self.image, self.quads)
+    self.spriteBatch = setupSpriteBatch(self.raw, self.tilesheetImage, self.quads)
     self.walls = loadWalls(self.raw)
     for _, wall in ipairs(self.walls) do
         world

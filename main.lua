@@ -8,11 +8,12 @@ end
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
 require('src.globals')
+local room = require('src.room')
+
 local input = require('src.input')
 local physics = require('src.physics')
 local player = require('src.player')
 local render = require('src.render')
-local room = require('src.room')
 
 local camera = require('src.camera')
 local world = World()

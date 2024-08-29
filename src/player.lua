@@ -6,34 +6,33 @@ local PLAYER_SPEED = 100
 local anim8 = require('lib.anim8')
 local input = require('src.input')
 local render = require('src.render')
+local room = require('src.room')
 
-local idleSpriteSheet = love.graphics.newImage('assets/characters/HumanTownsfolkIdle.png')
 local idleSpriteGrid =
-    anim8.newGrid(32, 32, idleSpriteSheet:getWidth(), idleSpriteSheet:getHeight())
-local walkingSpriteSheet = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png')
+    anim8.newGrid(32, 32, room.characterIdleImage:getWidth(), room.characterIdleImage:getHeight())
 local walkingSpriteGrid =
-    anim8.newGrid(32, 32, walkingSpriteSheet:getWidth(), idleSpriteSheet:getHeight())
+    anim8.newGrid(32, 32, room.characterWalkImage:getWidth(), room.characterWalkImage:getHeight())
 
 local sprites = {
     idle = {
         anim = anim8.newAnimation(idleSpriteGrid('1-4', 1), 0.1),
-        image = idleSpriteSheet,
+        image = room.characterIdleImage,
     },
     walkingrf = {
         anim = anim8.newAnimation(walkingSpriteGrid('1-4', 1), 0.1),
-        image = walkingSpriteSheet,
+        image = room.characterWalkImage,
     },
     walkinglf = {
         anim = anim8.newAnimation(walkingSpriteGrid('1-4', 2), 0.1),
-        image = walkingSpriteSheet,
+        image = room.characterWalkImage,
     },
     walkingrb = {
         anim = anim8.newAnimation(walkingSpriteGrid('1-4', 3), 0.1),
-        image = walkingSpriteSheet,
+        image = room.characterWalkImage,
     },
     walkinglb = {
         anim = anim8.newAnimation(walkingSpriteGrid('1-4', 4), 0.1),
-        image = walkingSpriteSheet,
+        image = room.characterWalkImage,
     },
 }
 

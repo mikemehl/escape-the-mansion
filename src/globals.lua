@@ -16,3 +16,5 @@ if not _G.Entity then _G.Entity = require('lib.concord').entity end
 if not _G.World then _G.World = require('lib.concord').world end
 
 if not _G.Utils then _G.Utils = require('lib.concord').utils end
+
+if not _G.lume then _G.lume = require('lib.lume') end
