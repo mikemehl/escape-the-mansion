@@ -78,15 +78,41 @@ local function loadWalls(data)
     return walls
 end
 
+local function loadDoors(data)
+    local doors = {}
+    for _, layer in pairs(data.layers) do
+        if layer.name == 'Doors' then
+            for _, obj in pairs(layer.objects) do
+                local id = obj.id
+                doors[id] = {
+                    id = obj.id,
+                    x = obj.x,
+                    y = obj.y,
+                    dest = obj.properties['to'].id,
+                }
+            end
+        end
+    end
+    return doors
+end
+
 function M:init(world)
     self.quads = getTileQuads(self.raw)
     self.spriteBatch = setupSpriteBatch(self.raw, self.tilesheetImage, self.quads)
     self.walls = loadWalls(self.raw)
+    self.doors = loadDoors(self.raw)
     for _, wall in ipairs(self.walls) do
         world
             :newEntity()
             :give('position', wall.x, wall.y)
             :give('collisionBox', wall.x, wall.y, wall.width, wall.height)
+    end
+    for _, door in pairs(self.doors) do
+        print('DOOR')
+        world
+            :newEntity()
+            :give('position', door.x, door.y)
+            :give('collisionBox', door.x - 2, door.y - 2, 4, 4)
     end
 end
 
