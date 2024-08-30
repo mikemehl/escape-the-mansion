@@ -15,25 +15,70 @@ Component('velocity', function(c, x, y)
     c.y = y or 0
 end)
 
-Component('collisionBox', function(c, x, y, w, h, react)
-    bumpWorld:add(c, x, y, w, h)
-    if react then c.react = react end
-end)
+Component(
+    'collisionBox',
+    ---@param c table
+    ---@param x number
+    ---@param y number
+    ---@param w number
+    ---@param h number
+    ---@param filter fun(item: table, other: table): string
+    ---@param flags {isDoor: boolean, dest: {x: number, y: number}?}
+    function(c, x, y, w, h, filter, flags)
+        bumpWorld:add(c, x, y, w, h)
+        c.filter = filter or function() return 'slide' end
+        c.flags = flags or { isDoor = false }
+    end
+)
+
+Component(
+    'collisionResolve',
+    ---@param c table
+    ---@param x number The new x position taking into account collisions
+    ---@param y number The new y position taking into account collisions
+    ---@param colliders [table]
+    function(c, x, y, colliders)
+        c.x = x
+        c.y = y
+        c.colliders = colliders
+    end
+)
 
 M.ApplyVelocity = System({ pool = { 'position', 'velocity' } })
 function M.ApplyVelocity:update(dt)
     for _, e in ipairs(self.pool) do
-        e.position.x = e.position.x + e.velocity.x
-        e.position.y = e.position.y + e.velocity.y
-        if e.collisionBox then
-            local newx, newy, collisions, len =
-                bumpWorld:move(e.collisionBox, e.position.x, e.position.y)
-            for _, c in pairs(collisions) do
-                if c.react then c.react(e) end
-            end
-            e.position.x = newx
-            e.position.y = newy
-        end
+        local goalx = e.position.x + e.velocity.x
+        local goaly = e.position.y + e.velocity.y
+        e.position.x = goalx
+        e.position.y = goaly
+    end
+end
+
+M.DetectCollisions = System({ pool = { 'position', 'collisionBox' } })
+function M.DetectCollisions:update(dt)
+    for _, e in ipairs(self.pool) do
+        local newx, newy, collisions, len =
+            bumpWorld:check(e.collisionBox, e.position.x, e.position.y, e.collisionBox.filter)
+        e:give('collisionResolve', newx, newy, collisions)
+    end
+end
+
+M.ResolveCollisions = System({
+    pool = { 'position', 'collisionBox', 'collisionResolve' },
+})
+function M.ResolveCollisions:update(dt)
+    for _, e in ipairs(self.pool) do
+        e.position.x = e.collisionResolve.x
+        e.position.y = e.collisionResolve.y
+
+        bumpWorld:update(
+            e.collisionBox,
+            e.position.x,
+            e.position.y,
+            e.collisionBox.w,
+            e.collisionBox.h
+        )
+        e:remove('collisionResolve')
     end
 end
 
@@ -61,6 +106,12 @@ function M:draw()
     end
 end
 
-function M.init(world) world:addSystem(M.ApplyVelocity):addSystem(M.DebugPositions) end
+function M.init(world)
+    world
+        :addSystem(M.ApplyVelocity)
+        :addSystem(M.DetectCollisions)
+        :addSystem(M.ResolveCollisions)
+        :addSystem(M.DebugPositions)
+end
 
 return M

@@ -426,13 +426,13 @@
 </data>
  </layer>
  <objectgroup id="7" name="Doors">
-  <object id="19" x="132.75" y="121.25">
+  <object id="19" x="132" y="120.75">
    <properties>
     <property name="to" type="object" value="20"/>
    </properties>
    <point/>
   </object>
-  <object id="20" x="132.25" y="145">
+  <object id="20" x="132" y="149.625">
    <properties>
     <property name="to" type="object" value="19"/>
    </properties>
@@ -440,10 +440,10 @@
   </object>
  </objectgroup>
  <objectgroup id="8" name="WallObjs">
-  <object id="21" x="56" y="120" width="143" height="24.6"/>
-  <object id="22" x="56" y="16" width="143" height="24.6"/>
-  <object id="23" x="56" y="33.0868" width="5" height="92.1765"/>
-  <object id="24" x="193.75" y="32" width="4.5" height="92.1765"/>
+  <object id="21" x="56" y="122.875" width="143" height="20.225"/>
+  <object id="22" x="56" y="16" width="143" height="23.6"/>
+  <object id="23" x="56" y="40.0868" width="5.75" height="82.3015"/>
+  <object id="24" x="193.75" y="40" width="4.5" height="82.6765"/>
  </objectgroup>
  <objectgroup id="3" name="Points">
   <object id="1" name="PlayerStart" type="PlayerStart" x="128" y="72">

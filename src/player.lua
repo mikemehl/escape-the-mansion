@@ -116,7 +116,10 @@ function M.init(world)
         :give('position', startPoint.x, startPoint.y)
         :give('velocity', 0, 0)
         :give('player')
-        :give('collisionBox', startPoint.x + 8, startPoint.y + 8, 8, 8)
+        :give('collisionBox', startPoint.x + 8, startPoint.y + 8, 8, 8, function(item, other)
+            if other.flags.isDoor then return 'cross' end
+            return 'slide'
+        end)
         :give('spotlightTarget')
     player = setSprite(player, 'idle')
     world:addSystem(M.UpdatePlayer)

@@ -28,11 +28,11 @@
             "scaleInEditor": 5.5
         },
         "test-room.tmx": {
-            "scale": 4,
+            "scale": 8,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 123,
-                "y": 112.25
+                "x": 101.625,
+                "y": 170.5
             }
         },
         "test-room.tmx#HauntedHouseProps": {
@@ -60,7 +60,7 @@
         "test-room.tmx"
     ],
     "project": "escape-the-mansion.tiled-project",
-    "property.type": "object",
+    "property.type": "int",
     "recentFiles": [
         "test-room.tmx",
         "haunted-house.tsx",

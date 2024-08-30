@@ -13,7 +13,10 @@ local M = {
     characterWalkImage = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png'),
 }
 
-Component('door')
+Component('door', function(c, x, y)
+    c.x = x
+    c.y = y
+end)
 
 ---@param data Tiled
 ---@return love.Quad[]
@@ -124,17 +127,29 @@ function M:init(world)
     self.doors = loadDoors(self.raw)
     self.points = loadPoints(self.raw)
     for _, wall in ipairs(self.walls) do
-        world
-            :newEntity()
-            :give('position', wall.x, wall.y)
-            :give('collisionBox', wall.x, wall.y, wall.width, wall.height)
+        world:newEntity():give('position', wall.x, wall.y):give(
+            'collisionBox',
+            wall.x,
+            wall.y,
+            wall.width,
+            wall.height,
+            function() return 'touch' end
+        )
     end
     for _, door in pairs(self.doors) do
         world
             :newEntity()
             :give('position', door.x, door.y)
-            :give('collisionBox', door.x - 2, door.y - 2, 4, 4)
-            :give('door')
+            :give('door', door.dest.x, door.dest.y)
+            :give(
+                'collisionBox',
+                door.x,
+                door.y,
+                2,
+                2,
+                function() return 'cross' end,
+                { isDoor = true, dest = { x = door.dest.x, y = door.dest.y } }
+            )
     end
 end
 
