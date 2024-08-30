@@ -29,10 +29,10 @@
         },
         "test-room.tmx": {
             "scale": 5.5,
-            "selectedLayer": 4,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 86.54545454545456,
-                "y": 293.2727272727273
+                "x": 240,
+                "y": 160
             }
         },
         "test-room.tmx#HauntedHouseProps": {

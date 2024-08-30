@@ -10,7 +10,7 @@ return {
   tilewidth = 8,
   tileheight = 8,
   nextlayerid = 9,
-  nextobjectid = 29,
+  nextobjectid = 31,
   properties = {},
   tilesets = {
     {
@@ -1966,34 +1966,17 @@ return {
       properties = {},
       objects = {
         {
-          id = 19,
+          id = 30,
           name = "",
           type = "",
-          shape = "point",
-          x = 132,
-          y = 120.75,
-          width = 0,
-          height = 0,
+          shape = "rectangle",
+          x = 126.364,
+          y = 122.909,
+          width = 11.4545,
+          height = 20.9091,
           rotation = 0,
           visible = true,
-          properties = {
-            ["to"] = { id = 20 }
-          }
-        },
-        {
-          id = 20,
-          name = "",
-          type = "",
-          shape = "point",
-          x = 132,
-          y = 149.625,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["to"] = { id = 19 }
-          }
+          properties = {}
         }
       }
     },
@@ -2018,7 +2001,20 @@ return {
           shape = "rectangle",
           x = 56,
           y = 122.875,
-          width = 143,
+          width = 69.1818,
+          height = 20.225,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 29,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 138.727,
+          y = 122.875,
+          width = 60.2727,
           height = 20.225,
           rotation = 0,
           visible = true,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="29">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="31">
  <editorsettings>
   <export target="test-room.lua" format="lua"/>
  </editorsettings>
@@ -426,21 +426,11 @@
 </data>
  </layer>
  <objectgroup id="7" name="Doors">
-  <object id="19" x="132" y="120.75">
-   <properties>
-    <property name="to" type="object" value="20"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="20" x="132" y="149.625">
-   <properties>
-    <property name="to" type="object" value="19"/>
-   </properties>
-   <point/>
-  </object>
+  <object id="30" x="126.364" y="122.909" width="11.4545" height="20.9091"/>
  </objectgroup>
  <objectgroup id="8" name="WallObjs">
-  <object id="21" x="56" y="122.875" width="143" height="20.225"/>
+  <object id="21" x="56" y="122.875" width="69.1818" height="20.225"/>
+  <object id="29" x="138.727" y="122.875" width="60.2727" height="20.225"/>
   <object id="22" x="56" y="16" width="143" height="23.6"/>
   <object id="23" x="56" y="40.0868" width="5.75" height="82.3015"/>
   <object id="24" x="193.75" y="40" width="4.5" height="82.6765"/>
