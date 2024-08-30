@@ -57,9 +57,11 @@ end
 M.DetectCollisions = System({ pool = { 'position', 'collisionBox' } })
 function M.DetectCollisions:update(dt)
     for _, e in ipairs(self.pool) do
+        if e.collisionBox.flags.isWall then goto continue end
         local newx, newy, collisions, len =
             bumpWorld:check(e.collisionBox, e.position.x, e.position.y, e.collisionBox.filter)
         e:give('collisionResolve', newx, newy, collisions)
+        ::continue::
     end
 end
 
@@ -93,6 +95,8 @@ function M.DebugPositions:draw()
     end
     love.graphics.setColor(r, g, b, a)
 end
+
+function M:getBumpWorld() return bumpWorld end
 
 function M:draw()
     if DEBUG_PHYSICS then

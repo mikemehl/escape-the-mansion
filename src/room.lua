@@ -133,7 +133,8 @@ function M:init(world)
             wall.y,
             wall.width,
             wall.height,
-            function() return 'touch' end
+            function() return 'touch' end,
+            { isDoor = false, isWall = true }
         )
     end
     for _, door in pairs(self.doors) do
@@ -141,15 +142,11 @@ function M:init(world)
             :newEntity()
             :give('position', door.x, door.y)
             :give('door', door.dest.x, door.dest.y)
-            :give(
-                'collisionBox',
-                door.x,
-                door.y,
-                2,
-                2,
-                function() return 'cross' end,
-                { isDoor = true, dest = { x = door.dest.x, y = door.dest.y } }
-            )
+            :give('collisionBox', door.x, door.y, 2, 2, function() return 'cross' end, {
+                isDoor = true,
+                isWall = false,
+                dest = { x = door.dest.x, y = door.dest.y },
+            })
     end
 end
 
