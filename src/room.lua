@@ -13,6 +13,8 @@ local M = {
     characterWalkImage = love.graphics.newImage('assets/characters/HumanTownsfolkWalk.png'),
 }
 
+Component('door')
+
 ---@param data Tiled
 ---@return love.Quad[]
 local function getTileQuads(data)
@@ -93,7 +95,26 @@ local function loadDoors(data)
             end
         end
     end
+    for _, door in pairs(doors) do
+        local dest = doors[door.dest]
+        door.dest = {
+            x = dest.x,
+            y = dest.y,
+        }
+    end
     return doors
+end
+
+local function loadPoints(data)
+    local points = {}
+    for _, layer in pairs(data.layers) do
+        if layer.name == 'Points' then
+            for _, point in pairs(layer.objects) do
+                points[point.name] = point
+            end
+        end
+    end
+    return points
 end
 
 function M:init(world)
@@ -101,6 +122,7 @@ function M:init(world)
     self.spriteBatch = setupSpriteBatch(self.raw, self.tilesheetImage, self.quads)
     self.walls = loadWalls(self.raw)
     self.doors = loadDoors(self.raw)
+    self.points = loadPoints(self.raw)
     for _, wall in ipairs(self.walls) do
         world
             :newEntity()
@@ -108,12 +130,19 @@ function M:init(world)
             :give('collisionBox', wall.x, wall.y, wall.width, wall.height)
     end
     for _, door in pairs(self.doors) do
-        print('DOOR')
         world
             :newEntity()
             :give('position', door.x, door.y)
             :give('collisionBox', door.x - 2, door.y - 2, 4, 4)
+            :give('door')
     end
+end
+
+function M:getPlayerStartPoint()
+    return {
+        x = self.points['PlayerStart'].x,
+        y = self.points['PlayerStart'].y,
+    }
 end
 
 function M:draw() love.graphics.draw(self.spriteBatch) end

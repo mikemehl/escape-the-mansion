@@ -15,7 +15,7 @@ local walkingSpriteGrid =
 
 local sprites = {
     idle = {
-        anim = anim8.newAnimation(idleSpriteGrid('1-4', 1), 0.1),
+        anim = anim8.newAnimation(idleSpriteGrid('1-8', 1), 0.1),
         image = room.characterIdleImage,
     },
     walkingrf = {
@@ -111,11 +111,12 @@ function M.UpdatePlayerSprite:update(_)
 end
 
 function M.init(world)
+    local startPoint = room:getPlayerStartPoint()
     local player = Entity(world)
-        :give('position', 70, 70)
+        :give('position', startPoint.x, startPoint.y)
         :give('velocity', 0, 0)
         :give('player')
-        :give('collisionBox', 70 + 8, 70 + 8, 8, 8)
+        :give('collisionBox', startPoint.x + 8, startPoint.y + 8, 8, 8)
         :give('spotlightTarget')
     player = setSprite(player, 'idle')
     world:addSystem(M.UpdatePlayer)

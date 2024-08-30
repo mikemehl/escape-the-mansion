@@ -15,7 +15,10 @@ Component('velocity', function(c, x, y)
     c.y = y or 0
 end)
 
-Component('collisionBox', function(c, x, y, w, h) bumpWorld:add(c, x, y, w, h) end)
+Component('collisionBox', function(c, x, y, w, h, react)
+    bumpWorld:add(c, x, y, w, h)
+    if react then c.react = react end
+end)
 
 M.ApplyVelocity = System({ pool = { 'position', 'velocity' } })
 function M.ApplyVelocity:update(dt)
@@ -23,8 +26,13 @@ function M.ApplyVelocity:update(dt)
         e.position.x = e.position.x + e.velocity.x
         e.position.y = e.position.y + e.velocity.y
         if e.collisionBox then
-            e.position.x, e.position.y, _, _ =
+            local newx, newy, collisions, len =
                 bumpWorld:move(e.collisionBox, e.position.x, e.position.y)
+            for _, c in pairs(collisions) do
+                if c.react then c.react(e) end
+            end
+            e.position.x = newx
+            e.position.y = newy
         end
     end
 end
