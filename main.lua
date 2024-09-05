@@ -1,42 +1,13 @@
-if os.getenv('LOCAL_LUA_DEBUGGER_VSCODE') == '1' then
-    package.loaded['lldebugger'] = assert(
-        loadfile('/usr/lib/node_modules/local-lua-debugger-vscode/debugger/lldebugger.lua')
-    )()
-    require('lldebugger').start()
-end
+local sti = require('lib.sti')
 
-love.graphics.setDefaultFilter('nearest', 'nearest')
+C = {
+    WALL_OBJ_LAYER = 8,
+}
 
-require('src.globals')
-local room = require('src.room')
+Room = sti('assets/test-room.lua')
 
-local input = require('src.input')
-local physics = require('src.physics')
-local player = require('src.player')
+function love.init() assert(Room) end
 
-local camera = require('src.camera')
-local render = require('src.render')
+function love.draw() Room:draw() end
 
-local world = World()
-
-function love.load()
-    room:init(world)
-    physics.init(world)
-    player.init(world)
-    render.init(world)
-    camera.init(world)
-end
-
-function love.update(dt)
-    input:update()
-    world:emit('update', dt)
-end
-
-function love.draw()
-    camera:draw(function(l, t, w, h)
-        room:draw()
-        world:emit('draw')
-        physics:draw()
-    end)
-    -- love.graphics.print('HELLO WORLD', 50, 50)
-end
+function love.update(_) end
