@@ -38,6 +38,7 @@ local componentList = {
         c.image = image or error()
         c.grid = grid or error()
         c.anim = anim or error()
+        c.flipped = false
     end,
 }
 
@@ -61,7 +62,15 @@ end
 local ControlSys = concord.system({ pool = { 'controllable' } })
 function ControlSys:update(_)
     for _, e in ipairs(self.pool) do
-        if Input:pressed('left') and e.drawable and e.anim then e.anim.anim:flipH() end
+        if e.drawable and e.anim then
+            if Input:pressed('left') and not e.anim.flipped then
+                e.anim.flipped = true
+                e.anim.anim:flipH()
+            elseif Input:pressed('right') and e.anim.flipped then
+                e.anim.flipped = false
+                e.anim.anim:flipH()
+            end
+        end
     end
 end
 
