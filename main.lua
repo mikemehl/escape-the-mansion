@@ -1,5 +1,10 @@
+---@module 'anim8'
 local anim8 = require('lib.anim8')
+
+---@module 'baton.baton'
 local baton = require('lib.baton.baton')
+
+---@module 'sti.init'
 local sti = require('lib.sti')
 
 WINDOW_W = love.graphics.getWidth()
@@ -24,6 +29,7 @@ local Input = baton.new({
 Room = sti('assets/test-room.lua')
 
 --[[ ECS ]]
+---@module 'concord.init'
 local concord = require('lib.concord')
 
 --[[ Components ]]
@@ -34,11 +40,10 @@ local componentList = {
     end,
     ['drawable'] = function(c) c.drawable = true end,
     ['controllable'] = function(c) c.controllable = true end,
-    ['anim'] = function(c, image, grid, anim)
-        c.image = image or error()
-        c.grid = grid or error()
-        c.anim = anim or error()
-        c.flipped = false
+    ['anim'] = function(c, anim)
+        c.image = anim.image
+        c.grid = anim.grid
+        c.anim = anim.anim
     end,
 }
 
@@ -85,18 +90,25 @@ World:addSystems(DrawAnimSys, ControlSys)
 
 local Player = {}
 
+---@type table<string, AnimDef>
+local PlayerAnims = {}
+
 --- Load the character animation.
----@return love.Image, table, table
 local function loadCharacterIdleAnim()
     local image = love.graphics.newImage('assets/characters/HumanTownsfolkIdle.png')
     local grid = anim8.newGrid(32, 32, image:getWidth(), image:getHeight())
     local anim = anim8.newAnimation(grid('1-4', 1), 0.3)
-    return image, grid, anim
+    PlayerAnims.idle = {
+        image = image,
+        anim = anim,
+        grid = grid,
+    }
 end
 
 --- Love init routine
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    loadCharacterIdleAnim()
     assert(World)
     assert(Room)
     Room:removeLayer('WallObjs')
@@ -108,7 +120,7 @@ function love.load()
                 :give('position', obj.x, obj.y)
                 :give('drawable')
                 :give('controllable')
-                :give('anim', loadCharacterIdleAnim())
+                :give('anim', PlayerAnims.idle)
             break
         end
     end
