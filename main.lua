@@ -60,7 +60,7 @@ function DrawAnimSys:draw()
 end
 
 local ControlSys = concord.system({ pool = { 'controllable' } })
-function ControlSys:update(_)
+function ControlSys:update(dt)
     for _, e in ipairs(self.pool) do
         if e.drawable and e.anim then
             if Input:pressed('left') and not e.anim.flipped then
@@ -70,6 +70,10 @@ function ControlSys:update(_)
                 e.anim.flipped = false
                 e.anim.anim:flipH()
             end
+        end
+        if e.position then
+            if Input:down('left') then e.position.x = e.position.x - 100 * dt end
+            if Input:down('right') then e.position.x = e.position.x + 100 * dt end
         end
     end
 end
@@ -92,6 +96,7 @@ end
 
 --- Love init routine
 function love.load()
+    love.graphics.setDefaultFilter('nearest', 'nearest')
     assert(World)
     assert(Room)
     Room:removeLayer('WallObjs')
@@ -117,9 +122,9 @@ end
 ---@diagnostic disable-next-line: duplicate-set-field
 function love.draw()
     love.graphics.setBackgroundColor(0, 0, 0, 0)
-    local xc, yc = WINDOW_W / 2, WINDOW_H / 2
-    xc, yc = xc - Player.position.x, yc - Player.position.y
-    Room:draw(-xc / 4, -yc / 4, 4, 4)
+    local xc, yc = love.graphics.transformPoint(Player.position.x, Player.position.y)
+    xc, yc = WINDOW_W / 8 - xc, yc + WINDOW_H / 8 - yc
+    Room:draw(xc, -yc, 4, 4)
 end
 
 --- Love update routine
