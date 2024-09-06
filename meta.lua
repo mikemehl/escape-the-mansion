@@ -166,8 +166,8 @@
 --- @field visible boolean Toggle if layer is visible or hidden
 --- @field opacity any Opacity of layer
 --- @field properties table Custom properties
---- @field update fun(number) Update function
---- @field draw fun() Draw function
+--- @field update fun(self, number) Update function
+--- @field draw fun(self) Draw function
 --- @see Map.layers
 --- @usage
 --	-- Create a Custom Layer
@@ -369,10 +369,10 @@ function Map:removeLayer(index) end
 function Map:update(dt) end
 
 --- Draw every Layer
----@param tx number Translate on X
----@param ty number Translate on Y
----@param sx number Scale on X
----@param sy number Scale on Y
+---@param tx number? Translate on X
+---@param ty number? Translate on Y
+---@param sx number? Scale on X
+---@param sy number? Scale on Y
 function Map:draw(tx, ty, sx, sy) end
 
 --- Draw an individual Layer
